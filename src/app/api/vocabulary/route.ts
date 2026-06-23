@@ -1,0 +1,56 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { createVocabularySchema, itemTypeSchema } from "@/lib/validators";
+
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const search = searchParams.get("search")?.trim() ?? "";
+  const typeParam = searchParams.get("type");
+  const page = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
+  const pageSize = Math.min(200, Math.max(1, Number(searchParams.get("pageSize") ?? "50") || 50));
+
+  const typeFilter = itemTypeSchema.safeParse(typeParam);
+
+  const where = {
+    ...(typeFilter.success ? { itemType: typeFilter.data } : {}),
+    ...(search
+      ? {
+          OR: [
+            { arabicTranslit: { contains: search, mode: "insensitive" as const } },
+            { hebrewMeaning: { contains: search, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+
+  const [items, total] = await Promise.all([
+    prisma.vocabulary.findMany({
+      where,
+      include: { practiceHistory: true },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * pageSize,
+      take: pageSize,
+    }),
+    prisma.vocabulary.count({ where }),
+  ]);
+
+  return NextResponse.json({ items, total });
+}
+
+export async function POST(request: Request) {
+  const body = await request.json().catch(() => null);
+  const parsed = createVocabularySchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "קלט לא תקין" }, { status: 400 });
+  }
+
+  const existing = await prisma.vocabulary.findUnique({
+    where: { arabicTranslit: parsed.data.arabicTranslit },
+  });
+  if (existing) {
+    return NextResponse.json({ error: "duplicate", existing }, { status: 409 });
+  }
+
+  const item = await prisma.vocabulary.create({ data: parsed.data });
+  return NextResponse.json({ item }, { status: 201 });
+}

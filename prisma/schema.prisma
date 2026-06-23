@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ItemType {
+  WORD
+  PHRASE
+  SENTENCE
+}
+
+model Vocabulary {
+  id             String   @id @default(uuid())
+  arabicTranslit String   @map("arabic_translit")
+  hebrewMeaning  String   @map("hebrew_meaning")
+  itemType       ItemType @map("item_type")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  practiceHistory PracticeHistory?
+
+  @@unique([arabicTranslit])
+  @@map("vocabulary")
+}
+
+model PracticeHistory {
+  id            String     @id @default(uuid())
+  vocabularyId  String     @unique @map("vocabulary_id")
+  vocabulary    Vocabulary @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+  correctCount  Int        @default(0) @map("correct_count")
+  wrongCount    Int        @default(0) @map("wrong_count")
+  lastPracticed DateTime?  @map("last_practiced")
+
+  @@map("practice_history")
+}
