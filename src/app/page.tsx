@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ListPlus, BookOpen, Sparkles, LogOut } from "lucide-react";
+import { ListPlus, BookOpen, Sparkles, ScanLine, LogOut } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 
 export default function Home() {
@@ -21,6 +21,12 @@ export default function Home() {
       </div>
 
       <div className="flex flex-col gap-3">
+        <HomeMenuButton
+          href="/lesson"
+          icon={ScanLine}
+          title="סריקת שיעור"
+          description="צלמ/י עמודי שיעור וקבל/י לימוד ומבדק מותאמים"
+        />
         <HomeMenuButton
           href="/add-words"
           icon={ListPlus}

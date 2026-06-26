@@ -39,7 +39,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "קלט לא תקין" }, { status: 400 });
   }
 
+  const { vocabularyIds } = parsedRequest.data;
   const vocab = await prisma.vocabulary.findMany({
+    where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
     select: { id: true, arabicTranslit: true, hebrewMeaning: true, itemType: true },
   });
 

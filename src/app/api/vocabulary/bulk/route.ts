@@ -20,6 +20,7 @@ export async function POST(request: Request) {
 
   let savedCount = 0;
   const conflicts: BulkConflict[] = [];
+  const savedItems: { tempId: string; id: string }[] = [];
 
   for (const item of parsed.data.items) {
     const existing = await prisma.vocabulary.findUnique({
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
         });
         continue;
       }
-      await prisma.vocabulary.create({
+      const created = await prisma.vocabulary.create({
         data: {
           arabicTranslit: item.arabicTranslit,
           hebrewMeaning: item.hebrewMeaning,
@@ -45,10 +46,16 @@ export async function POST(request: Request) {
         },
       });
       savedCount += 1;
+      savedItems.push({ tempId: item.tempId, id: created.id });
       continue;
     }
 
-    if (item.resolution === "skip" || item.resolution === "keep") {
+    if (item.resolution === "skip") {
+      continue;
+    }
+
+    if (item.resolution === "keep") {
+      if (existing) savedItems.push({ tempId: item.tempId, id: existing.id });
       continue;
     }
 
@@ -58,18 +65,20 @@ export async function POST(request: Request) {
           where: { id: existing.id },
           data: { hebrewMeaning: item.hebrewMeaning, itemType: item.itemType },
         });
+        savedItems.push({ tempId: item.tempId, id: existing.id });
       } else {
-        await prisma.vocabulary.create({
+        const created = await prisma.vocabulary.create({
           data: {
             arabicTranslit: item.arabicTranslit,
             hebrewMeaning: item.hebrewMeaning,
             itemType: item.itemType,
           },
         });
+        savedItems.push({ tempId: item.tempId, id: created.id });
       }
       savedCount += 1;
     }
   }
 
-  return NextResponse.json({ saved: savedCount, conflicts });
+  return NextResponse.json({ saved: savedCount, conflicts, savedItems });
 }
