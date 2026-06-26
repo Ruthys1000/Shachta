@@ -68,7 +68,6 @@ export function ImageUploadForm({
         type="file"
         accept="image/*"
         multiple
-        capture="environment"
         className="hidden"
         id="lesson-image-input"
         onChange={(e) => handleFilesSelected(e.target.files)}
