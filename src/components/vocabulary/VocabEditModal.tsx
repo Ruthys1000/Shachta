@@ -5,12 +5,7 @@ import type { ItemType } from "@prisma/client";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
-
-const TYPE_OPTIONS: { value: ItemType; label: string }[] = [
-  { value: "WORD", label: "מילה" },
-  { value: "PHRASE", label: "ביטוי" },
-  { value: "SENTENCE", label: "משפט" },
-];
+import { ItemTypeSelector } from "@/components/ui/ItemTypeSelector";
 
 export function VocabEditModal({
   initial,
@@ -60,21 +55,7 @@ export function VocabEditModal({
           onChange={(e) => setHebrewMeaning(e.target.value)}
           placeholder="פירוש בעברית"
         />
-        <div className="flex gap-2">
-          {TYPE_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setItemType(opt.value)}
-              className={`flex-1 rounded-xl border px-2 py-2 text-sm transition ${
-                itemType === opt.value
-                  ? "border-primary bg-primary-soft text-primary-dark"
-                  : "border-border text-muted"
-              }`}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
+        <ItemTypeSelector value={itemType} onChange={setItemType} />
       </div>
     </Modal>
   );

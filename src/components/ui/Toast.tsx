@@ -66,7 +66,7 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: str
       <p className="flex-1 text-sm">{toast.message}</p>
       <button
         onClick={() => onDismiss(toast.id)}
-        className="shrink-0 rounded-full p-1 text-muted transition hover:bg-black/5"
+        className="shrink-0 rounded-full p-1 text-muted transition hover:bg-muted-soft"
         aria-label="סגור הודעה"
       >
         <X className="size-4" />
