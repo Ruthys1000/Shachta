@@ -1,13 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ListPlus, BookOpen, Sparkles, ScanLine, LogOut } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export default function Home() {
   const router = useRouter();
+  const [confirmingLogout, setConfirmingLogout] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   async function handleLogout() {
+    setLoggingOut(true);
     await fetch("/api/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
@@ -48,12 +53,24 @@ export default function Home() {
       </div>
 
       <button
-        onClick={handleLogout}
+        onClick={() => setConfirmingLogout(true)}
         className="mx-auto mt-10 flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted transition hover:bg-muted-soft"
       >
         <LogOut className="size-4" />
         התנתקות
       </button>
+
+      {confirmingLogout && (
+        <ConfirmDialog
+          title="התנתקות"
+          message="להתנתק מהחשבון?"
+          confirmLabel="התנתקות"
+          tone="danger"
+          loading={loggingOut}
+          onConfirm={handleLogout}
+          onCancel={() => setConfirmingLogout(false)}
+        />
+      )}
     </main>
   );
 }

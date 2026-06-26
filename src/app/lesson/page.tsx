@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, Sparkles } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import type {
   ParsedVocabItem,
   BulkVocabConflict,
@@ -19,6 +19,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { ImageUploadForm } from "@/components/lesson/ImageUploadForm";
 import { DialogueWalkthrough } from "@/components/lesson/DialogueWalkthrough";
 import { VocabFlashcard } from "@/components/lesson/VocabFlashcard";
+import { ParsingStatus, LESSON_PARSE_STEPS, QUIZ_GENERATE_STEPS } from "@/components/lesson/ParsingStatus";
 import { ConfirmTable } from "@/components/add-words/ConfirmTable";
 import { DuplicateDialog } from "@/components/add-words/DuplicateDialog";
 import { QuizProgressBar } from "@/components/quiz/QuizProgressBar";
@@ -303,9 +304,7 @@ export default function LessonPage() {
 
       {phase === "upload" && <ImageUploadForm onSubmit={handleUpload} loading={false} error={parseError} />}
 
-      {phase === "parsing" && (
-        <EmptyState icon={Sparkles} title="קוראים את השיעור..." description="רגע אחד, ה-AI מנתח את התמונות" />
-      )}
+      {phase === "parsing" && <ParsingStatus steps={LESSON_PARSE_STEPS} />}
 
       {phase === "dialogue" && dialogue.length > 0 && (
         <DialogueWalkthrough lines={dialogue} onDone={() => setPhase("confirm-vocab")} />
@@ -363,7 +362,7 @@ export default function LessonPage() {
 
       {phase === "quiz-loading" && (
         <>
-          <EmptyState icon={Sparkles} title="מכינים מבדק..." description="רגע אחד, ה-AI בונה שאלות על השיעור" />
+          {!quizError && <ParsingStatus steps={QUIZ_GENERATE_STEPS} />}
           {quizError && (
             <div className="mt-4 flex flex-col items-center gap-3 rounded-2xl border border-danger/30 bg-danger-soft px-6 py-10 text-center">
               <p className="text-sm text-danger">{quizError}</p>
