@@ -58,3 +58,15 @@ export interface PracticeResult {
   vocabularyId: string;
   correct: boolean;
 }
+
+export interface DialogueLine {
+  speaker?: string;
+  arabicTranslit: string;
+  hebrewMeaning: string;
+}
+
+export interface LessonParseResponse {
+  lessonTitle?: string;
+  vocabulary: ParsedVocabItem[];
+  dialogue: DialogueLine[];
+}
