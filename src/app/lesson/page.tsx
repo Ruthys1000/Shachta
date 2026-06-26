@@ -16,6 +16,7 @@ import type {
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorCard } from "@/components/ui/ErrorCard";
 import { ImageUploadForm } from "@/components/lesson/ImageUploadForm";
 import { DialogueWalkthrough } from "@/components/lesson/DialogueWalkthrough";
 import { VocabFlashcard } from "@/components/lesson/VocabFlashcard";
@@ -364,10 +365,11 @@ export default function LessonPage() {
         <>
           {!quizError && <ParsingStatus steps={QUIZ_GENERATE_STEPS} />}
           {quizError && (
-            <div className="mt-4 flex flex-col items-center gap-3 rounded-2xl border border-danger/30 bg-danger-soft px-6 py-10 text-center">
-              <p className="text-sm text-danger">{quizError}</p>
-              <Button onClick={handleGenerateQuiz}>נסה/י שוב</Button>
-            </div>
+            <ErrorCard
+              className="mt-4"
+              message={quizError}
+              action={<Button onClick={handleGenerateQuiz}>נסה/י שוב</Button>}
+            />
           )}
         </>
       )}

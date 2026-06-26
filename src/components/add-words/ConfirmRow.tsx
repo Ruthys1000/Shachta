@@ -1,16 +1,10 @@
 "use client";
 
 import { Trash2, AlertTriangle } from "lucide-react";
-import type { ItemType } from "@prisma/client";
 import type { ParsedVocabItem } from "@/types";
 import { Card } from "@/components/ui/Card";
 import { TextField } from "@/components/ui/TextField";
-
-const TYPE_OPTIONS: { value: ItemType; label: string }[] = [
-  { value: "WORD", label: "מילה" },
-  { value: "PHRASE", label: "ביטוי" },
-  { value: "SENTENCE", label: "משפט" },
-];
+import { ItemTypeSelector } from "@/components/ui/ItemTypeSelector";
 
 export function ConfirmRow({
   item,
@@ -35,21 +29,10 @@ export function ConfirmRow({
             onChange={(e) => onChange({ ...item, hebrewMeaning: e.target.value })}
             placeholder="פירוש בעברית"
           />
-          <div className="flex gap-2">
-            {TYPE_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => onChange({ ...item, itemType: opt.value })}
-                className={`flex-1 rounded-xl border px-2 py-1.5 text-sm transition ${
-                  item.itemType === opt.value
-                    ? "border-primary bg-primary-soft text-primary-dark"
-                    : "border-border text-muted"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
+          <ItemTypeSelector
+            value={item.itemType}
+            onChange={(itemType) => onChange({ ...item, itemType })}
+          />
         </div>
         <button
           onClick={onDelete}

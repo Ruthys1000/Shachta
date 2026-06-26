@@ -6,6 +6,7 @@ import type { Quiz, QuizQuestion } from "@/types";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ErrorCard } from "@/components/ui/ErrorCard";
 import { ParsingStatus, QUIZ_GENERATE_STEPS } from "@/components/lesson/ParsingStatus";
 import { QuizProgressBar } from "@/components/quiz/QuizProgressBar";
 import { QuestionCard } from "@/components/quiz/QuestionCard";
@@ -119,10 +120,10 @@ export default function QuizPage() {
       {phase === "loading" && <ParsingStatus steps={QUIZ_GENERATE_STEPS} />}
 
       {phase === "error" && (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-danger/30 bg-danger-soft px-6 py-10 text-center">
-          <p className="text-sm text-danger">{error}</p>
-          <Button onClick={handleGenerate}>נסה/י שוב</Button>
-        </div>
+        <ErrorCard
+          message={error ?? ""}
+          action={<Button onClick={handleGenerate}>נסה/י שוב</Button>}
+        />
       )}
 
       {phase === "running" && quiz && (
