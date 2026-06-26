@@ -37,16 +37,25 @@ export function DuplicateDialog({
           <span className="text-sm text-muted">{conflict.hebrewMeaning}</span>
         </div>
       </div>
-      <div className="mt-5 flex flex-col gap-2">
-        <Button variant="secondary" onClick={() => onResolve("keep")}>
-          השאר את הקיים
-        </Button>
-        <Button variant="primary" onClick={() => onResolve("replace")}>
-          החלף בחדש
-        </Button>
-        <Button variant="ghost" onClick={() => onResolve("skip")}>
-          דלג על הפריט הזה
-        </Button>
+      <div className="mt-5 flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
+          <Button variant="secondary" onClick={() => onResolve("keep")}>
+            השאר את הקיים
+          </Button>
+          <p className="text-xs text-muted">הגרסה הקיימת תישאר ללא שינוי, והפריט הזה יחשב כחלק מהשיעור/הרשימה הנוכחית</p>
+        </div>
+        <div className="flex flex-col gap-1">
+          <Button variant="primary" onClick={() => onResolve("replace")}>
+            החלף בחדש
+          </Button>
+          <p className="text-xs text-muted">הגרסה הקיימת תימחק והפריט החדש יישמר במקומה</p>
+        </div>
+        <div className="flex flex-col gap-1">
+          <Button variant="ghost" onClick={() => onResolve("skip")}>
+            דלג על הפריט הזה
+          </Button>
+          <p className="text-xs text-muted">הפריט הזה לא יישמר ולא יהיה חלק מהשיעור/הרשימה הנוכחית</p>
+        </div>
       </div>
     </Modal>
   );

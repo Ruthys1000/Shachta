@@ -8,14 +8,18 @@ import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { VocabSearchBar } from "@/components/vocabulary/VocabSearchBar";
 import { VocabFilterTabs } from "@/components/vocabulary/VocabFilterTabs";
 import { VocabRow } from "@/components/vocabulary/VocabRow";
+import { VocabRowSkeleton } from "@/components/vocabulary/VocabRowSkeleton";
 import { VocabEditModal } from "@/components/vocabulary/VocabEditModal";
 import { DeleteConfirmModal } from "@/components/vocabulary/DeleteConfirmModal";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Spinner } from "@/components/ui/Spinner";
+import { useToast } from "@/components/ui/Toast";
+import { apiFetch } from "@/lib/apiFetch";
 
 export default function VocabularyPage() {
+  const toast = useToast();
   const [items, setItems] = useState<VocabularyWithHistory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false);
   const [search, setSearch] = useState("");
   const [type, setType] = useState<ItemType | "ALL">("ALL");
   const [editing, setEditing] = useState<VocabularyWithHistory | null>(null);
@@ -24,7 +28,7 @@ export default function VocabularyPage() {
   const [editError, setEditError] = useState<string | undefined>(undefined);
 
   const load = useCallback(async () => {
-    setLoading(true);
+    setSearching(true);
     const params = new URLSearchParams();
     if (search) params.set("search", search);
     if (type !== "ALL") params.set("type", type);
@@ -32,6 +36,7 @@ export default function VocabularyPage() {
     const data = await res.json();
     setItems(data.items ?? []);
     setLoading(false);
+    setSearching(false);
   }, [search, type]);
 
   useEffect(() => {
@@ -55,15 +60,22 @@ export default function VocabularyPage() {
       return;
     }
     setEditing(null);
+    toast.success("הפריט נשמר");
     load();
   }
 
   async function handleDelete() {
     if (!deleting) return;
     setSaving(true);
-    await fetch(`/api/vocabulary/${deleting.id}`, { method: "DELETE" });
+    const label = deleting.arabicTranslit;
+    const result = await apiFetch(`/api/vocabulary/${deleting.id}`, { method: "DELETE" });
     setSaving(false);
     setDeleting(null);
+    if (!result.ok) {
+      toast.error(`לא ניתן למחוק את "${label}": ${result.error}`);
+      return;
+    }
+    toast.success(`"${label}" נמחק`);
     load();
   }
 
@@ -71,13 +83,15 @@ export default function VocabularyPage() {
     <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10">
       <ScreenHeader title="אוצר המילים שלי" />
       <div className="mb-4 flex flex-col gap-3">
-        <VocabSearchBar value={search} onChange={setSearch} />
+        <VocabSearchBar value={search} onChange={setSearch} searching={searching && !loading} />
         <VocabFilterTabs value={type} onChange={setType} />
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-10">
-          <Spinner className="size-6 text-primary" />
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <VocabRowSkeleton key={i} />
+          ))}
         </div>
       ) : items.length === 0 ? (
         <EmptyState
