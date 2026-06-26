@@ -6,6 +6,7 @@ import type { Quiz, QuizQuestion } from "@/types";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ParsingStatus, QUIZ_GENERATE_STEPS } from "@/components/lesson/ParsingStatus";
 import { QuizProgressBar } from "@/components/quiz/QuizProgressBar";
 import { QuestionCard } from "@/components/quiz/QuestionCard";
 import { QuizSummary } from "@/components/quiz/QuizSummary";
@@ -115,9 +116,7 @@ export default function QuizPage() {
         />
       )}
 
-      {phase === "loading" && (
-        <EmptyState icon={Sparkles} title="מכין מבדק..." description="רגע אחד, ה-AI בונה לך שאלות חדשות" />
-      )}
+      {phase === "loading" && <ParsingStatus steps={QUIZ_GENERATE_STEPS} />}
 
       {phase === "error" && (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-danger/30 bg-danger-soft px-6 py-10 text-center">
