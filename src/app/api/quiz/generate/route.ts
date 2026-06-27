@@ -61,7 +61,7 @@ export async function POST(request: Request) {
   async function attemptGenerate(): Promise<{ title: string; questions: QuizQuestion[] } | null> {
     let result: unknown;
     try {
-      result = await callClaudeForJSON<unknown>({
+      result = await callClaudeForJSON({
         system,
         userMessage,
         tool: SUBMIT_QUIZ_TOOL,
