@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import type { Quiz, QuizQuestion } from "@/types";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -71,7 +71,7 @@ export default function QuizPage() {
     setAnswered((prev) => [...prev, { question, userAnswer: currentAnswer, correct }]);
   }
 
-  async function handleNext() {
+  const handleNext = useCallback(async () => {
     if (!quiz) return;
     if (currentIndex + 1 < quiz.questions.length) {
       setCurrentIndex(currentIndex + 1);
@@ -92,13 +92,24 @@ export default function QuizPage() {
       }),
     });
     setPhase("summary");
-  }
+  }, [quiz, currentIndex, answered]);
+
+  useEffect(() => {
+    if (!submitted || currentCorrect !== true || !quiz) return;
+    const isMultipleChoice = !!quiz.questions[currentIndex].options?.length;
+    if (!isMultipleChoice) return;
+    const timer = setTimeout(handleNext, 800);
+    return () => clearTimeout(timer);
+  }, [submitted, currentCorrect, currentIndex, quiz, handleNext]);
 
   function handleRestart() {
     setQuiz(null);
     setAnswered([]);
     setPhase("idle");
   }
+
+  const autoAdvancing =
+    submitted && currentCorrect === true && !!quiz?.questions[currentIndex].options?.length;
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10">
@@ -141,11 +152,11 @@ export default function QuizPage() {
               <Button onClick={handleSubmitAnswer} disabled={!currentAnswer.trim()}>
                 בדיקה
               </Button>
-            ) : (
+            ) : !autoAdvancing ? (
               <Button onClick={handleNext}>
                 {currentIndex + 1 < quiz.questions.length ? "השאלה הבאה" : "לסיכום"}
               </Button>
-            )}
+            ) : null}
           </div>
         </div>
       )}
