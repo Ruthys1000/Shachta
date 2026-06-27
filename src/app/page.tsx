@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { ListPlus, BookOpen, Sparkles, ScanLine, LogOut } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -21,10 +22,16 @@ export default function Home() {
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10 sm:max-w-3xl">
       <div className="mb-8 flex flex-col items-center gap-2 pt-4 text-center sm:pt-10">
-        <div className="rounded-full bg-primary-soft p-3">
-          <BookOpen className="size-6 text-primary" />
-        </div>
-        <h1 className="text-2xl font-bold sm:text-3xl">מתרגלת ערבית</h1>
+        <Image
+          src="/shachta-avatar.png"
+          alt="שחתה"
+          width={112}
+          height={112}
+          priority
+          unoptimized
+          className="size-24 rounded-3xl object-cover sm:size-28"
+        />
+        <h1 className="text-2xl font-bold sm:text-3xl">היי שחתה! 👋</h1>
         <p className="text-sm text-muted">תרגול אישי של ערבית מדוברת בתעתיק עברי</p>
       </div>
 
