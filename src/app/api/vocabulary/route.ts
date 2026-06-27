@@ -2,14 +2,25 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createVocabularySchema, itemTypeSchema } from "@/lib/validators";
 
+const SORT_ORDER_BY = {
+  newest: { createdAt: "desc" as const },
+  oldest: { createdAt: "asc" as const },
+  alpha: { arabicTranslit: "asc" as const },
+};
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const search = searchParams.get("search")?.trim() ?? "";
   const typeParam = searchParams.get("type");
+  const sortParam = searchParams.get("sort");
   const page = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
   const pageSize = Math.min(200, Math.max(1, Number(searchParams.get("pageSize") ?? "50") || 50));
 
   const typeFilter = itemTypeSchema.safeParse(typeParam);
+  const orderBy =
+    sortParam && sortParam in SORT_ORDER_BY
+      ? SORT_ORDER_BY[sortParam as keyof typeof SORT_ORDER_BY]
+      : SORT_ORDER_BY.newest;
 
   const where = {
     ...(typeFilter.success ? { itemType: typeFilter.data } : {}),
@@ -27,7 +38,7 @@ export async function GET(request: Request) {
     prisma.vocabulary.findMany({
       where,
       include: { practiceHistory: true },
-      orderBy: { createdAt: "desc" },
+      orderBy,
       skip: (page - 1) * pageSize,
       take: pageSize,
     }),

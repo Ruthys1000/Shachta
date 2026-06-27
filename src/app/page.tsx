@@ -34,25 +34,29 @@ export default function Home() {
           icon={ScanLine}
           title="סריקת שיעור"
           description="צלמ/י עמודי שיעור וקבל/י לימוד ומבדק מותאמים"
+          tag="העלאה + תרגול"
           emphasis="solid"
         />
         <HomeMenuButton
           href="/add-words"
           icon={ListPlus}
           title="הוספת מילים"
-          description="הדבק/י מילים, ביטויים או משפטים חדשים"
+          description="הדבק/י מילים חדשות ושמור/י אותן באוצר המילים"
+          tag="העלאה"
         />
         <HomeMenuButton
           href="/vocabulary"
           icon={BookOpen}
           title="אוצר המילים שלי"
-          description="צפייה, חיפוש וערכת בפריטים שצברת"
+          description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
+          tag="עיון וניהול"
         />
         <HomeMenuButton
           href="/quiz"
           icon={Sparkles}
           title="צור מבדק חדש"
-          description="תרגול עם מבדק שנוצר במיוחד בשבילך"
+          description="תרגול וחזרה על המילים שכבר שמורות באוצר"
+          tag="תרגול"
         />
       </div>
 
