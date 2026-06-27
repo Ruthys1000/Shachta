@@ -34,7 +34,7 @@ export default function Home() {
             className="size-28 rounded-2xl object-cover sm:size-32"
           />
         </Card>
-        <h1 className="text-2xl font-bold sm:text-3xl">שחתה מתרגלת ערבית</h1>
+        <h1 className="text-2xl font-bold sm:text-3xl">איילת מתרגלת ערבית</h1>
         <p className="text-sm text-muted">תרגול אישי של ערבית מדוברת בתעתיק עברי</p>
       </div>
 
