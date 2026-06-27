@@ -3,13 +3,11 @@ import type { LucideIcon } from "lucide-react";
 import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 
-type MenuTone = "primary" | "secondary" | "accent" | "success";
+type MenuEmphasis = "solid" | "soft";
 
-const toneClasses: Record<MenuTone, string> = {
-  primary: "bg-primary-soft text-primary",
-  secondary: "bg-secondary-soft text-secondary",
-  accent: "bg-accent-soft text-accent",
-  success: "bg-success-soft text-success",
+const emphasisClasses: Record<MenuEmphasis, string> = {
+  solid: "bg-primary text-white",
+  soft: "bg-primary-soft text-primary",
 };
 
 export function HomeMenuButton({
@@ -17,18 +15,18 @@ export function HomeMenuButton({
   icon: Icon,
   title,
   description,
-  tone = "primary",
+  emphasis = "soft",
 }: {
   href: string;
   icon: LucideIcon;
   title: string;
   description: string;
-  tone?: MenuTone;
+  emphasis?: MenuEmphasis;
 }) {
   return (
     <Link href={href} className="flex">
-      <Card className="flex h-full items-center gap-4 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:scale-[0.99]">
-        <div className={`rounded-full p-3 ${toneClasses[tone]}`}>
+      <Card className="flex h-full w-full items-center gap-4 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:scale-[0.99]">
+        <div className={`rounded-full p-3 ${emphasisClasses[emphasis]}`}>
           <Icon className="size-6" />
         </div>
         <div className="flex flex-1 flex-col">
