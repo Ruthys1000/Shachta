@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles } from "lucide-react";
+import { Spinner } from "@/components/ui/Spinner";
 
 export const LESSON_PARSE_STEPS = [
   "מעלים את התמונות...",
@@ -28,7 +28,7 @@ export function ParsingStatus({ steps }: { steps: string[] }) {
 
   return (
     <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-border bg-card px-6 py-12 text-center">
-      <Sparkles className="size-10 animate-pulse text-primary" />
+      <Spinner className="size-10 text-primary" />
       <p className="text-base font-medium">{steps[stepIndex]}</p>
       <p className="text-xs text-muted">זה יכול לקחת כמה שניות, אנחנו עדיין כאן</p>
     </div>
