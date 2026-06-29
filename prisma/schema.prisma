@@ -44,3 +44,14 @@ model SentenceLessonHistory {
 
   @@map("sentence_lesson_history")
 }
+
+model AiUsageLog {
+  id           String   @id @default(uuid())
+  route        String
+  inputTokens  Int      @map("input_tokens")
+  outputTokens Int      @map("output_tokens")
+  costUsd      Float    @map("cost_usd")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("ai_usage_log")
+}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ListPlus, BookOpen, BookOpenText, Sparkles, ScanLine, LogOut, Blocks } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
+import { AiBudgetBadge } from "@/components/home/AiBudgetBadge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Card } from "@/components/ui/Card";
 
@@ -36,6 +37,7 @@ export default function Home() {
         </Card>
         <h1 className="text-2xl font-bold sm:text-3xl">איילת מתרגלת ערבית</h1>
         <p className="text-sm text-muted">תרגול אישי של ערבית מדוברת בתעתיק עברי</p>
+        <AiBudgetBadge />
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

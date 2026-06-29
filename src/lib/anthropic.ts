@@ -1,9 +1,13 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { CLAUDE_MODEL } from "@/lib/constants";
+import { getBudgetStatus, recordUsage } from "@/lib/aiUsage";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export class ClaudeToolCallError extends Error {}
+export class BudgetExceededError extends Error {}
+
+const BUDGET_EXCEEDED_MESSAGE = "חרגת מהתקציב היומי לבינה מלאכותית, נסה/י שוב מחר";
 
 interface ToolDefinition {
   name: string;
@@ -22,6 +26,11 @@ async function requestToolUse(
   params: Omit<Anthropic.MessageCreateParamsNonStreaming, "tools" | "tool_choice">,
   tool: ToolDefinition
 ): Promise<unknown> {
+  const budget = await getBudgetStatus();
+  if (budget.exceeded) {
+    throw new BudgetExceededError(BUDGET_EXCEEDED_MESSAGE);
+  }
+
   let response;
   try {
     response = await anthropic.messages.create({
@@ -33,6 +42,12 @@ async function requestToolUse(
     console.error(`[anthropic] tool call "${toolName}" failed:`, err);
     throw new ClaudeToolCallError(`Claude API call failed: ${(err as Error).message}`);
   }
+
+  await recordUsage({
+    route: toolName,
+    inputTokens: response.usage.input_tokens,
+    outputTokens: response.usage.output_tokens,
+  });
 
   if (response.stop_reason === "max_tokens") {
     console.error(`[anthropic] tool call "${toolName}" truncated at max_tokens`);
