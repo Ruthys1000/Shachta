@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { ParseInputForm } from "@/components/add-words/ParseInputForm";
 import { ConfirmTable } from "@/components/add-words/ConfirmTable";
 import { DuplicateDialog } from "@/components/add-words/DuplicateDialog";
+import { apiFetch } from "@/lib/apiFetch";
 
 type Phase = "input" | "confirm" | "done";
 
@@ -31,19 +32,17 @@ export default function AddWordsPage() {
   async function handleParse() {
     setParseLoading(true);
     setParseError(undefined);
-    const res = await fetch("/api/vocabulary/parse", {
+    const result = await apiFetch<{ items: ParsedVocabItem[] }>("/api/vocabulary/parse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: rawText }),
     });
     setParseLoading(false);
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setParseError(body.error ?? "שגיאה בניתוח הטקסט");
+    if (!result.ok) {
+      setParseError(result.error);
       return;
     }
-    const data = await res.json();
-    setItems(data.items ?? []);
+    setItems(result.data.items ?? []);
     setPhase("confirm");
   }
 

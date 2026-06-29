@@ -13,6 +13,7 @@ import { StoryReader } from "@/components/story/StoryReader";
 import { StoryQuestionCard } from "@/components/story/StoryQuestionCard";
 import { StorySummary } from "@/components/story/StorySummary";
 import { isAnswerCorrect } from "@/lib/normalize";
+import { apiFetch } from "@/lib/apiFetch";
 
 type Phase = "idle" | "loading" | "reading" | "questions" | "summary" | "error";
 
@@ -35,19 +36,17 @@ export default function StoryPage() {
   async function handleGenerate() {
     setPhase("loading");
     setError(undefined);
-    const res = await fetch("/api/story/generate", {
+    const result = await apiFetch<{ story: Story }>("/api/story/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setError(body.error ?? "שגיאה ביצירת הסיפור");
+    if (!result.ok) {
+      setError(result.error);
       setPhase("error");
       return;
     }
-    const data = await res.json();
-    setStory(data.story);
+    setStory(result.data.story);
     setPhase("reading");
   }
 

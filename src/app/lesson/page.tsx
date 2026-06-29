@@ -28,6 +28,7 @@ import { QuestionCard } from "@/components/quiz/QuestionCard";
 import { QuizSummary } from "@/components/quiz/QuizSummary";
 import { isAnswerCorrect } from "@/lib/normalize";
 import type { CompressedImage } from "@/lib/image";
+import { apiFetch } from "@/lib/apiFetch";
 
 type Phase =
   | "upload"
@@ -83,18 +84,17 @@ export default function LessonPage() {
   async function handleUpload(images: CompressedImage[]) {
     setPhase("parsing");
     setParseError(undefined);
-    const res = await fetch("/api/lesson/parse", {
+    const result = await apiFetch<LessonParseResponse>("/api/lesson/parse", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ images: images.map((img) => ({ data: img.data, mediaType: img.mediaType })) }),
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setParseError(body.error ?? "שגיאה בניתוח השיעור");
+    if (!result.ok) {
+      setParseError(result.error);
       setPhase("upload");
       return;
     }
-    const data: LessonParseResponse = await res.json();
+    const data = result.data;
     setLessonTitle(data.lessonTitle);
     setDialogue(data.dialogue);
     setItems(data.vocabulary);
@@ -223,19 +223,17 @@ export default function LessonPage() {
     setPhase("quiz-loading");
     setQuizError(undefined);
     const vocabularyIds = studyItems.map((it) => it.vocabularyId);
-    const res = await fetch("/api/quiz/generate", {
+    const result = await apiFetch<{ quiz: Quiz }>("/api/quiz/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ vocabularyIds }),
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setQuizError(body.error ?? "שגיאה ביצירת המבדק");
+    if (!result.ok) {
+      setQuizError(result.error);
       setPhase("quiz-loading");
       return;
     }
-    const data = await res.json();
-    setQuiz(data.quiz);
+    setQuiz(result.data.quiz);
     setCurrentIndex(0);
     setCurrentAnswer("");
     setSubmitted(false);

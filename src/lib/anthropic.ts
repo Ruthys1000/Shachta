@@ -2,7 +2,12 @@ import Anthropic from "@anthropic-ai/sdk";
 import { CLAUDE_MODEL } from "@/lib/constants";
 import { getBudgetStatus, recordUsage } from "@/lib/aiUsage";
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const CLAUDE_CALL_TIMEOUT_MS = 25_000;
+
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+  timeout: CLAUDE_CALL_TIMEOUT_MS,
+});
 
 export class ClaudeToolCallError extends Error {}
 export class BudgetExceededError extends Error {}

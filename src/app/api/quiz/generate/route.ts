@@ -11,6 +11,8 @@ import {
 } from "@/lib/constants";
 import type { Quiz, QuizQuestion } from "@/types";
 
+export const maxDuration = 60;
+
 function validateQuestions(
   questions: QuizQuestion[],
   validVocabIds: Set<string>
