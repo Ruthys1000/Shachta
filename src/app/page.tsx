@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ListPlus, BookOpen, BookOpenText, Sparkles, ScanLine, LogOut } from "lucide-react";
+import { ListPlus, BookOpen, BookOpenText, Sparkles, ScanLine, LogOut, Blocks } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Card } from "@/components/ui/Card";
@@ -60,6 +60,14 @@ export default function Home() {
           title="אוצר המילים שלי"
           description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
           tag="ניהול ועיון"
+        />
+        <HomeMenuButton
+          href="/sentence-builder"
+          icon={Blocks}
+          title="לימוד בניית משפטים"
+          description="למד/י איך מרכיבים משפט נכון מהמילים שלך, צעד-צעד"
+          tag="לימוד"
+          emphasis="solid"
         />
         <HomeMenuButton
           href="/quiz"
