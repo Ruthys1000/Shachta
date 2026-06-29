@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ListPlus, BookOpen, BookOpenText, Sparkles, ScanLine, LogOut, Blocks } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { AiBudgetBadge } from "@/components/home/AiBudgetBadge";
+import { GreetingBanner } from "@/components/home/GreetingBanner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Card } from "@/components/ui/Card";
 import { PageShell } from "@/components/ui/PageShell";
@@ -38,6 +39,7 @@ export default function Home() {
         </Card>
         <h1 className="text-2xl font-bold sm:text-3xl">איילת מתרגלת ערבית</h1>
         <p className="text-sm text-muted">תרגול אישי של ערבית מדוברת בתעתיק עברי</p>
+        <GreetingBanner />
         <AiBudgetBadge />
       </div>
 
