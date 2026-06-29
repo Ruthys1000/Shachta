@@ -115,3 +115,31 @@ export const aiStoryResponseSchema = z.object({
   segments: z.array(aiStorySegmentSchema),
   questions: z.array(aiStoryQuestionSchema),
 });
+
+export const sentenceLessonGenerateRequestSchema = z.object({
+  vocabularyIds: z.array(z.string().uuid()).min(1).optional(),
+});
+
+export const aiSentenceLessonWordSchema = z.object({
+  arabicTranslit: z.string(),
+  hebrewMeaning: z.string(),
+  role: z.string(),
+});
+
+export const aiSentenceLessonExampleSchema = z.object({
+  arabicTranslit: z.string(),
+  hebrewMeaning: z.string(),
+  words: z.array(aiSentenceLessonWordSchema),
+});
+
+export const aiSentenceBuildExerciseSchema = z.object({
+  hebrewMeaning: z.string(),
+  correctOrder: z.array(z.string()).min(2),
+});
+
+export const aiSentenceLessonResponseSchema = z.object({
+  title: z.string(),
+  ruleExplanation: z.string(),
+  examples: z.array(aiSentenceLessonExampleSchema),
+  exercises: z.array(aiSentenceBuildExerciseSchema),
+});

@@ -22,6 +22,12 @@ export const STORY_GENERATE_STEPS = [
   "מכינים שאלות הבנה...",
 ];
 
+export const SENTENCE_LESSON_GENERATE_STEPS = [
+  "בוחרים מילים מהאוצר...",
+  "ה-AI בונה כלל בניית משפט...",
+  "מכינים תרגול הרכבה...",
+];
+
 export function ParsingStatus({ steps }: { steps: string[] }) {
   const [stepIndex, setStepIndex] = useState(0);
 

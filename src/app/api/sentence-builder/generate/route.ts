@@ -1,0 +1,121 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { callClaudeForJSON, ClaudeToolCallError } from "@/lib/anthropic";
+import {
+  SUBMIT_SENTENCE_LESSON_TOOL,
+  buildSentenceLessonSystemPrompt,
+  buildSentenceLessonUserMessage,
+} from "@/lib/ai/sentenceLessonPrompt";
+import { sentenceLessonGenerateRequestSchema, aiSentenceLessonResponseSchema } from "@/lib/validators";
+import { containsArabicScript } from "@/lib/arabicScript";
+import {
+  SENTENCE_LESSON_MIN_VOCAB,
+  SENTENCE_LESSON_MIN_EXAMPLES,
+  SENTENCE_LESSON_MIN_EXERCISES,
+} from "@/lib/constants";
+import type { SentenceLessonExample, SentenceBuildExercise } from "@/types";
+
+function validateExamples(examples: SentenceLessonExample[]): SentenceLessonExample[] {
+  return examples.filter(
+    (example) =>
+      !containsArabicScript([
+        example.arabicTranslit,
+        example.hebrewMeaning,
+        ...example.words.flatMap((w) => [w.arabicTranslit, w.hebrewMeaning, w.role]),
+      ])
+  );
+}
+
+function validateExercises(exercises: SentenceBuildExercise[]): SentenceBuildExercise[] {
+  return exercises.filter(
+    (exercise) =>
+      exercise.correctOrder.length >= 2 &&
+      !containsArabicScript([exercise.hebrewMeaning, ...exercise.correctOrder])
+  );
+}
+
+export async function POST(request: Request) {
+  const body = await request.json().catch(() => ({}));
+  const parsedRequest = sentenceLessonGenerateRequestSchema.safeParse(body);
+  if (!parsedRequest.success) {
+    return NextResponse.json({ error: "קלט לא תקין" }, { status: 400 });
+  }
+
+  const { vocabularyIds } = parsedRequest.data;
+  const vocab = await prisma.vocabulary.findMany({
+    where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
+    select: { arabicTranslit: true, hebrewMeaning: true, itemType: true },
+  });
+
+  if (vocab.length < SENTENCE_LESSON_MIN_VOCAB) {
+    return NextResponse.json(
+      { error: "צריך לפחות 6 מילים באוצר כדי ללמוד בניית משפט" },
+      { status: 400 }
+    );
+  }
+
+  const system = buildSentenceLessonSystemPrompt();
+  const userMessage = buildSentenceLessonUserMessage(vocab);
+
+  async function attemptGenerate(): Promise<{
+    title: string;
+    ruleExplanation: string;
+    examples: SentenceLessonExample[];
+    exercises: SentenceBuildExercise[];
+  } | null> {
+    let result: unknown;
+    try {
+      result = await callClaudeForJSON({
+        system,
+        userMessage,
+        tool: SUBMIT_SENTENCE_LESSON_TOOL,
+      });
+    } catch (err) {
+      if (err instanceof ClaudeToolCallError) return null;
+      throw err;
+    }
+    const validated = aiSentenceLessonResponseSchema.safeParse(result);
+    if (!validated.success) return null;
+    return {
+      title: validated.data.title,
+      ruleExplanation: validated.data.ruleExplanation,
+      examples: validateExamples(validated.data.examples as SentenceLessonExample[]),
+      exercises: validateExercises(validated.data.exercises as SentenceBuildExercise[]),
+    };
+  }
+
+  let attempt = await attemptGenerate();
+
+  function isGoodEnough(
+    a: { examples: SentenceLessonExample[]; exercises: SentenceBuildExercise[] } | null
+  ): boolean {
+    return (
+      !!a &&
+      a.examples.length >= SENTENCE_LESSON_MIN_EXAMPLES &&
+      a.exercises.length >= SENTENCE_LESSON_MIN_EXERCISES
+    );
+  }
+
+  if (!isGoodEnough(attempt)) {
+    const retry = await attemptGenerate();
+    if (isGoodEnough(retry)) {
+      attempt = retry;
+    }
+  }
+
+  if (!isGoodEnough(attempt) || !attempt) {
+    return NextResponse.json(
+      { error: "לא הצלחנו להכין שיעור תקין, נסה/י שוב" },
+      { status: 502 }
+    );
+  }
+
+  const lesson = {
+    title: attempt.title,
+    ruleExplanation: attempt.ruleExplanation,
+    examples: attempt.examples,
+    exercises: attempt.exercises,
+  };
+
+  return NextResponse.json({ lesson });
+}

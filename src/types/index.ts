@@ -87,3 +87,27 @@ export interface Story {
   segments: StorySegment[];
   questions: StoryQuestion[];
 }
+
+export interface SentenceLessonWord {
+  arabicTranslit: string;
+  hebrewMeaning: string;
+  role: string;
+}
+
+export interface SentenceLessonExample {
+  arabicTranslit: string;
+  hebrewMeaning: string;
+  words: SentenceLessonWord[];
+}
+
+export interface SentenceBuildExercise {
+  hebrewMeaning: string;
+  correctOrder: string[];
+}
+
+export interface SentenceLesson {
+  title: string;
+  ruleExplanation: string;
+  examples: SentenceLessonExample[];
+  exercises: SentenceBuildExercise[];
+}

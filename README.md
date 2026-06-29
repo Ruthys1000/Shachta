@@ -17,11 +17,13 @@
 ## מבנה ופיצ'רים
 
 - **`/login`** — מסך כניסה עם סיסמה גלובלית (`APP_PASSWORD`). אין שם משתמש, אין הרשמה.
-- **`/` (בית)** — תפריט ראשי עם 4 פעולות + כפתור התנתקות (עם דיאלוג אישור).
+- **`/` (בית)** — תפריט ראשי עם 6 פעולות + כפתור התנתקות (עם דיאלוג אישור).
 - **`/lesson` (סריקת שיעור)** — מעלים תמונות של עמודי שיעור → Claude Vision מנתח אותן (`/api/lesson/parse`) ומחזיר דיאלוג ואוצר מילים מזוהה → המשתמש עובר על הדיאלוג, מאשר/מתקן את אוצר המילים, שומר אותו, לומד אותו בפלאשקארדס, ולבסוף עושה מבדק שנוצר אוטומטית על הפריטים שנלמדו.
 - **`/add-words` (הוספת מילים)** — הדבקת טקסט חופשי (מילים/ביטויים/משפטים) → Claude מנתח ומפרק (`/api/vocabulary/parse`) → אישור וטיפול בכפילויות מול אוצר המילים הקיים (`/api/vocabulary/bulk`, עם 3 אופציות לפריט כפול: השאר קיים / החלף בחדש / דלג).
 - **`/vocabulary` (אוצר המילים שלי)** — רשימה עם חיפוש, סינון לפי סוג (מילה/ביטוי/משפט), עריכה ומחיקה של פריטים (`/api/vocabulary`, `/api/vocabulary/[id]`).
+- **`/sentence-builder` (לימוד בניית משפטים)** — מסך לימוד (לא מבדק): Claude בוחר כלל בנייה אחד מתאים לרמת מתחילים (סדר מילים, מיקום תואר, שלילה, שאלה וכו') על סמך אוצר המילים הקיים, מסביר אותו בעברית, ונותן דוגמאות עם פירוק מילה-מילה ותפקיד דקדוקי (`/api/sentence-builder/generate`). לאחר ההסבר — תרגול הרכבת משפט: לוחצים על צ'יפים של מילים מעורבבות בסדר הנכון. אין שמירת סטטיסטיקה (`PracticeHistory`) על השיעור הזה — זו כוונה: לימוד, לא בדיקה.
 - **`/quiz` (מבדק חדש)** — Claude יוצר מבדק (`/api/quiz/generate`) על סמך אוצר המילים הקיים, עם דגש על פריטים שצריך לחזק (`needsReview`). תוצאות נשמרות ב-`PracticeHistory` (`/api/practice/batch`).
+- **`/story` (סיפור והבנת הנקרא)** — Claude כותב סיפור קצר מתעתיק עברי על סמך אוצר המילים (`/api/story/generate`), ולאחריו שאלות הבנת הנקרא.
 
 כל הממשק בעברית, RTL (`dir="rtl"` ב-`src/app/layout.tsx`), פונט Heebo.
 
@@ -107,12 +109,12 @@ DATABASE_URL="postgresql://user:pass@localhost:5432/db" CHECKPOINT_DISABLE=1 npx
 src/
   app/                    # Next.js App Router — כל תיקייה = מסך/route
     api/                  # API routes (route handlers)
-    lesson/, add-words/, vocabulary/, quiz/, login/   # מסכים
+    lesson/, add-words/, vocabulary/, sentence-builder/, quiz/, story/, login/   # מסכים
     layout.tsx            # root layout: html dir="rtl", ToastProvider
     page.tsx               # מסך הבית
   components/
     ui/                   # קומפוננטות UI גנריות (Button, Card, Modal, Toast, ConfirmDialog...)
-    lesson/, add-words/, vocabulary/, quiz/, home/   # קומפוננטות ספציפיות-למסך
+    lesson/, add-words/, vocabulary/, sentence-builder/, quiz/, story/, home/   # קומפוננטות ספציפיות-למסך
   lib/
     prisma.ts             # PrismaClient singleton + driver adapter
     auth.ts                # session token (HMAC) + בדיקת סיסמה
