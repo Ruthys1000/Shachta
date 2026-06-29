@@ -25,6 +25,8 @@ export default function VocabularyPage() {
   const [search, setSearch] = useState("");
   const [type, setType] = useState<ItemType | "ALL">("ALL");
   const [sort, setSort] = useState<VocabSort>("newest");
+  const [totalWords, setTotalWords] = useState<number | null>(null);
+  const [filteredTotal, setFilteredTotal] = useState<number | null>(null);
   const [editing, setEditing] = useState<VocabularyWithHistory | null>(null);
   const [deleting, setDeleting] = useState<VocabularyWithHistory | null>(null);
   const [saving, setSaving] = useState(false);
@@ -39,6 +41,7 @@ export default function VocabularyPage() {
     const res = await fetch(`/api/vocabulary?${params.toString()}`);
     const data = await res.json();
     setItems(data.items ?? []);
+    setFilteredTotal(data.total ?? null);
     setLoading(false);
     setSearching(false);
   }, [search, type, sort]);
@@ -47,6 +50,13 @@ export default function VocabularyPage() {
     const timeout = setTimeout(load, 250);
     return () => clearTimeout(timeout);
   }, [load]);
+
+  useEffect(() => {
+    fetch("/api/vocabulary?pageSize=1")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setTotalWords(data?.total ?? null))
+      .catch(() => setTotalWords(null));
+  }, []);
 
   async function handleSave(data: { arabicTranslit: string; hebrewMeaning: string; itemType: ItemType }) {
     if (!editing) return;
@@ -83,9 +93,28 @@ export default function VocabularyPage() {
     load();
   }
 
+  const isFiltered = search !== "" || type !== "ALL";
+  const wordCountLabel =
+    totalWords === null
+      ? null
+      : isFiltered
+        ? `${filteredTotal ?? 0} מתוך ${totalWords} מילים`
+        : totalWords === 1
+          ? "מילה אחת"
+          : `${totalWords} מילים`;
+
   return (
     <PageShell>
-      <ScreenHeader title="אוצר המילים שלי" />
+      <ScreenHeader
+        title="אוצר המילים שלי"
+        badge={
+          wordCountLabel && (
+            <span className="inline-flex w-fit items-center rounded-full bg-muted-soft px-2 py-0.5 text-[11px] font-medium text-muted">
+              {wordCountLabel}
+            </span>
+          )
+        }
+      />
       <div className="mb-4 flex flex-col gap-3">
         <VocabSearchBar value={search} onChange={setSearch} searching={searching && !loading} />
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
