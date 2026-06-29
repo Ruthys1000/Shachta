@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { callClaudeVisionForJSON, withToolRetry, ClaudeToolCallError } from "@/lib/anthropic";
+import {
+  callClaudeVisionForJSON,
+  withToolRetry,
+  ClaudeToolCallError,
+  BudgetExceededError,
+} from "@/lib/anthropic";
 import {
   SUBMIT_LESSON_PARSE_TOOL,
   LESSON_PARSE_SYSTEM_PROMPT,
@@ -15,21 +20,29 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "תמונות לא תקינות" }, { status: 400 });
   }
 
-  const validated = await withToolRetry(async () => {
-    try {
-      const result = await callClaudeVisionForJSON({
-        system: LESSON_PARSE_SYSTEM_PROMPT,
-        userMessage: buildLessonParseUserMessage(parsedRequest.data.images.length),
-        images: parsedRequest.data.images,
-        tool: SUBMIT_LESSON_PARSE_TOOL,
-      });
-      const parsed = aiLessonParseResponseSchema.safeParse(result);
-      return parsed.success ? parsed.data : null;
-    } catch (err) {
-      if (err instanceof ClaudeToolCallError) return null;
-      throw err;
+  let validated;
+  try {
+    validated = await withToolRetry(async () => {
+      try {
+        const result = await callClaudeVisionForJSON({
+          system: LESSON_PARSE_SYSTEM_PROMPT,
+          userMessage: buildLessonParseUserMessage(parsedRequest.data.images.length),
+          images: parsedRequest.data.images,
+          tool: SUBMIT_LESSON_PARSE_TOOL,
+        });
+        const parsed = aiLessonParseResponseSchema.safeParse(result);
+        return parsed.success ? parsed.data : null;
+      } catch (err) {
+        if (err instanceof ClaudeToolCallError) return null;
+        throw err;
+      }
+    });
+  } catch (err) {
+    if (err instanceof BudgetExceededError) {
+      return NextResponse.json({ error: err.message }, { status: 429 });
     }
-  });
+    throw err;
+  }
 
   if (!validated) {
     return NextResponse.json({ error: "תגובת ה-AI לא תקינה, נסה/י שוב" }, { status: 502 });

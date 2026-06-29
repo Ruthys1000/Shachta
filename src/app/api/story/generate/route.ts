@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { callClaudeForJSON, ClaudeToolCallError } from "@/lib/anthropic";
+import { callClaudeForJSON, ClaudeToolCallError, BudgetExceededError } from "@/lib/anthropic";
 import { SUBMIT_STORY_TOOL, buildStorySystemPrompt, buildStoryUserMessage } from "@/lib/ai/storyPrompt";
 import { storyGenerateRequestSchema, aiStoryResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
@@ -65,19 +65,27 @@ export async function POST(request: Request) {
     };
   }
 
-  let attempt = await attemptGenerate();
-
   function isGoodEnough(
     a: { segments: StorySegment[]; questions: StoryQuestion[] } | null
   ): boolean {
     return !!a && a.segments.length >= STORY_MIN_SEGMENTS && a.questions.length >= STORY_MIN_QUESTIONS;
   }
 
-  if (!isGoodEnough(attempt)) {
-    const retry = await attemptGenerate();
-    if (isGoodEnough(retry)) {
-      attempt = retry;
+  let attempt: { title: string; segments: StorySegment[]; questions: StoryQuestion[] } | null;
+  try {
+    attempt = await attemptGenerate();
+
+    if (!isGoodEnough(attempt)) {
+      const retry = await attemptGenerate();
+      if (isGoodEnough(retry)) {
+        attempt = retry;
+      }
     }
+  } catch (err) {
+    if (err instanceof BudgetExceededError) {
+      return NextResponse.json({ error: err.message }, { status: 429 });
+    }
+    throw err;
   }
 
   if (!isGoodEnough(attempt) || !attempt) {

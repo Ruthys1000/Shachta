@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { callClaudeForJSON, ClaudeToolCallError } from "@/lib/anthropic";
+import { callClaudeForJSON, ClaudeToolCallError, BudgetExceededError } from "@/lib/anthropic";
 import {
   SUBMIT_SENTENCE_LESSON_TOOL,
   buildSentenceLessonSystemPrompt,
@@ -98,8 +98,6 @@ export async function POST(request: Request) {
     };
   }
 
-  let attempt = await attemptGenerate();
-
   function isGoodEnough(
     a: { examples: SentenceLessonExample[]; exercises: SentenceBuildExercise[] } | null
   ): boolean {
@@ -110,11 +108,26 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!isGoodEnough(attempt)) {
-    const retry = await attemptGenerate();
-    if (isGoodEnough(retry)) {
-      attempt = retry;
+  let attempt: {
+    title: string;
+    ruleExplanation: string;
+    examples: SentenceLessonExample[];
+    exercises: SentenceBuildExercise[];
+  } | null;
+  try {
+    attempt = await attemptGenerate();
+
+    if (!isGoodEnough(attempt)) {
+      const retry = await attemptGenerate();
+      if (isGoodEnough(retry)) {
+        attempt = retry;
+      }
     }
+  } catch (err) {
+    if (err instanceof BudgetExceededError) {
+      return NextResponse.json({ error: err.message }, { status: 429 });
+    }
+    throw err;
   }
 
   if (!isGoodEnough(attempt) || !attempt) {

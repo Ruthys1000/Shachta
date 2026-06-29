@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { callClaudeForJSON, ClaudeToolCallError } from "@/lib/anthropic";
+import { callClaudeForJSON, ClaudeToolCallError, BudgetExceededError } from "@/lib/anthropic";
 import { SUBMIT_QUIZ_TOOL, buildQuizSystemPrompt, buildQuizUserMessage } from "@/lib/ai/quizPrompt";
 import { quizGenerateRequestSchema, aiQuizResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
@@ -72,13 +72,21 @@ export async function POST(request: Request) {
     };
   }
 
-  let attempt = await attemptGenerate();
+  let attempt: { title: string; questions: QuizQuestion[] } | null;
+  try {
+    attempt = await attemptGenerate();
 
-  if (!attempt || attempt.questions.length < QUIZ_MIN_QUESTIONS) {
-    const retry = await attemptGenerate();
-    if (retry && retry.questions.length >= (attempt?.questions.length ?? 0)) {
-      attempt = retry;
+    if (!attempt || attempt.questions.length < QUIZ_MIN_QUESTIONS) {
+      const retry = await attemptGenerate();
+      if (retry && retry.questions.length >= (attempt?.questions.length ?? 0)) {
+        attempt = retry;
+      }
     }
+  } catch (err) {
+    if (err instanceof BudgetExceededError) {
+      return NextResponse.json({ error: err.message }, { status: 429 });
+    }
+    throw err;
   }
 
   if (!attempt || attempt.questions.length < QUIZ_MIN_QUESTIONS) {
