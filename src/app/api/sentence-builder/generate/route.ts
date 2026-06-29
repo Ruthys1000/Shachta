@@ -124,8 +124,6 @@ export async function POST(request: Request) {
     );
   }
 
-  await prisma.sentenceLessonHistory.create({ data: { title: attempt.title } });
-
   const lesson = {
     title: attempt.title,
     ruleExplanation: attempt.ruleExplanation,
