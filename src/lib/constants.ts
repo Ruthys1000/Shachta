@@ -6,3 +6,9 @@ export const CLAUDE_MODEL = "claude-sonnet-4-6";
 export const QUIZ_MIN_QUESTIONS = 3;
 export const QUIZ_MAX_QUESTIONS = 10;
 export const QUIZ_MULTIPLE_CHOICE_MIN_VOCAB = 4;
+
+export const STORY_MIN_VOCAB = 5;
+export const STORY_MIN_SEGMENTS = 4;
+export const STORY_MAX_SEGMENTS = 7;
+export const STORY_MIN_QUESTIONS = 3;
+export const STORY_MAX_QUESTIONS = 6;
