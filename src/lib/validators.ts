@@ -143,3 +143,7 @@ export const aiSentenceLessonResponseSchema = z.object({
   examples: z.array(aiSentenceLessonExampleSchema),
   exercises: z.array(aiSentenceBuildExerciseSchema),
 });
+
+export const sentenceLessonCompleteRequestSchema = z.object({
+  title: z.string().trim().min(1).max(500),
+});
