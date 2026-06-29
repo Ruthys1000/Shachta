@@ -49,7 +49,6 @@ export default function Home() {
           description="צלמ/י עמודי שיעור וקבל/י לימוד ומבדק מותאמים"
           tag="סריקה + תרגול"
           emphasis="solid"
-          highlighted
         />
         <HomeMenuButton
           href="/sentence-builder"
