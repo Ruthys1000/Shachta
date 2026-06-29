@@ -12,6 +12,9 @@ import {
   SENTENCE_LESSON_MIN_VOCAB,
   SENTENCE_LESSON_MIN_EXAMPLES,
   SENTENCE_LESSON_MIN_EXERCISES,
+  SENTENCE_LESSON_LEVEL_STEP,
+  SENTENCE_LESSON_MAX_LEVEL,
+  SENTENCE_LESSON_RECENT_TITLES_LIMIT,
 } from "@/lib/constants";
 import type { SentenceLessonExample, SentenceBuildExercise } from "@/types";
 
@@ -54,8 +57,19 @@ export async function POST(request: Request) {
     );
   }
 
-  const system = buildSentenceLessonSystemPrompt();
-  const userMessage = buildSentenceLessonUserMessage(vocab);
+  const lessonsCompleted = await prisma.sentenceLessonHistory.count();
+  const level = Math.min(SENTENCE_LESSON_MAX_LEVEL, Math.floor(lessonsCompleted / SENTENCE_LESSON_LEVEL_STEP) + 1);
+  const recentHistory = await prisma.sentenceLessonHistory.findMany({
+    orderBy: { createdAt: "desc" },
+    take: SENTENCE_LESSON_RECENT_TITLES_LIMIT,
+    select: { title: true },
+  });
+
+  const system = buildSentenceLessonSystemPrompt(level);
+  const userMessage = buildSentenceLessonUserMessage(
+    vocab,
+    recentHistory.map((h: { title: string }) => h.title)
+  );
 
   async function attemptGenerate(): Promise<{
     title: string;
@@ -109,6 +123,8 @@ export async function POST(request: Request) {
       { status: 502 }
     );
   }
+
+  await prisma.sentenceLessonHistory.create({ data: { title: attempt.title } });
 
   const lesson = {
     title: attempt.title,
