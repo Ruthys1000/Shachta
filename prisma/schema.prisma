@@ -36,3 +36,11 @@ model PracticeHistory {
 
   @@map("practice_history")
 }
+
+model SentenceLessonHistory {
+  id        String   @id @default(uuid())
+  title     String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("sentence_lesson_history")
+}

@@ -65,7 +65,7 @@ export function SentenceBuildExercise({
       <p className="text-base font-medium">בנה/י את המשפט: {exercise.hebrewMeaning}</p>
 
       <div
-        className="flex min-h-14 flex-wrap items-center gap-2 rounded-xl border border-dashed border-border bg-muted-soft p-3"
+        className="flex min-h-14 flex-wrap items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-muted-soft p-3"
         dir="ltr"
       >
         {chosen.length === 0 && <span className="text-sm text-muted">בחר/י מילים מהרשימה למטה</span>}
@@ -81,7 +81,7 @@ export function SentenceBuildExercise({
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2" dir="ltr">
+      <div className="flex flex-wrap justify-center gap-2" dir="ltr">
         {pool.map((token) => (
           <button
             key={token.tokenId}

@@ -18,3 +18,9 @@ export const SENTENCE_LESSON_MIN_EXAMPLES = 2;
 export const SENTENCE_LESSON_MAX_EXAMPLES = 4;
 export const SENTENCE_LESSON_MIN_EXERCISES = 3;
 export const SENTENCE_LESSON_MAX_EXERCISES = 5;
+
+// Lessons completed needed to advance one sentence-builder level.
+export const SENTENCE_LESSON_LEVEL_STEP = 3;
+export const SENTENCE_LESSON_MAX_LEVEL = 4;
+// How many recently-taught rule titles to show the AI so it avoids repeating them.
+export const SENTENCE_LESSON_RECENT_TITLES_LIMIT = 15;
