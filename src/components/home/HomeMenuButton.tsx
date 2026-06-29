@@ -17,6 +17,7 @@ export function HomeMenuButton({
   description,
   tag,
   emphasis = "soft",
+  highlighted = false,
 }: {
   href: string;
   icon: LucideIcon;
@@ -24,10 +25,15 @@ export function HomeMenuButton({
   description: string;
   tag: string;
   emphasis?: MenuEmphasis;
+  highlighted?: boolean;
 }) {
   return (
     <Link href={href} className="flex">
-      <Card className="flex h-full w-full items-center gap-4 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:scale-[0.99] lg:p-5">
+      <Card
+        className={`flex h-full w-full items-center gap-4 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:scale-[0.99] lg:p-5 ${
+          highlighted ? "ring-2 ring-primary/60 ring-offset-2 ring-offset-background" : ""
+        }`}
+      >
         <div className={`rounded-full p-3 ${emphasisClasses[emphasis]}`}>
           <Icon className="size-6" />
         </div>
