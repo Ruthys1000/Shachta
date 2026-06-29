@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ListPlus, BookOpen, Sparkles, ScanLine, LogOut } from "lucide-react";
+import { ListPlus, BookOpen, BookOpenText, Sparkles, ScanLine, LogOut } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Card } from "@/components/ui/Card";
@@ -67,6 +67,13 @@ export default function Home() {
           title="צור מבדק חדש"
           description="תרגול וחזרה על המילים שכבר שמורות באוצר"
           tag="תרגול"
+        />
+        <HomeMenuButton
+          href="/story"
+          icon={BookOpenText}
+          title="סיפור והבנת הנקרא"
+          description="סיפור קצר מהמילים שלך ושאלות הבנה בתעתיק"
+          tag="קריאה והבנה"
         />
       </div>
 

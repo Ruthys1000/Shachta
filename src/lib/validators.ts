@@ -94,3 +94,24 @@ export const aiQuizResponseSchema = z.object({
   title: z.string(),
   questions: z.array(aiQuizQuestionSchema),
 });
+
+export const storyGenerateRequestSchema = z.object({
+  vocabularyIds: z.array(z.string().uuid()).min(1).optional(),
+});
+
+export const aiStorySegmentSchema = z.object({
+  arabicTranslit: z.string(),
+  hebrewMeaning: z.string(),
+});
+
+export const aiStoryQuestionSchema = z.object({
+  question: z.string(),
+  questionHebrew: z.string(),
+  correctAnswer: z.string(),
+});
+
+export const aiStoryResponseSchema = z.object({
+  title: z.string(),
+  segments: z.array(aiStorySegmentSchema),
+  questions: z.array(aiStoryQuestionSchema),
+});

@@ -16,6 +16,12 @@ export const QUIZ_GENERATE_STEPS = [
   "מסדר את המבדק...",
 ];
 
+export const STORY_GENERATE_STEPS = [
+  "בוחרים מילים לסיפור...",
+  "ה-AI כותב את הסיפור...",
+  "מכינים שאלות הבנה...",
+];
+
 export function ParsingStatus({ steps }: { steps: string[] }) {
   const [stepIndex, setStepIndex] = useState(0);
 

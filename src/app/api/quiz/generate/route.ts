@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { callClaudeForJSON, ClaudeToolCallError } from "@/lib/anthropic";
 import { SUBMIT_QUIZ_TOOL, buildQuizSystemPrompt, buildQuizUserMessage } from "@/lib/ai/quizPrompt";
 import { quizGenerateRequestSchema, aiQuizResponseSchema } from "@/lib/validators";
+import { containsArabicScript } from "@/lib/arabicScript";
 import {
   QUIZ_MIN_QUESTIONS,
   QUIZ_MAX_QUESTIONS,
@@ -10,20 +11,13 @@ import {
 } from "@/lib/constants";
 import type { Quiz, QuizQuestion } from "@/types";
 
-const ARABIC_SCRIPT_PATTERN = /[؀-ۿ]/;
-
-function containsArabicScript(question: QuizQuestion): boolean {
-  const fields = [question.question, question.correctAnswer, ...(question.options ?? [])];
-  return fields.some((field) => ARABIC_SCRIPT_PATTERN.test(field));
-}
-
 function validateQuestions(
   questions: QuizQuestion[],
   validVocabIds: Set<string>
 ): QuizQuestion[] {
   return questions.filter((q) => {
     if (!validVocabIds.has(q.sourceVocabId)) return false;
-    if (containsArabicScript(q)) return false;
+    if (containsArabicScript([q.question, q.correctAnswer, ...(q.options ?? [])])) return false;
     if (q.type === "multiple_choice") {
       if (!q.options || q.options.length !== 4) return false;
       if (!q.options.includes(q.correctAnswer)) return false;

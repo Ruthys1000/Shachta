@@ -70,3 +70,20 @@ export interface LessonParseResponse {
   vocabulary: ParsedVocabItem[];
   dialogue: DialogueLine[];
 }
+
+export interface StorySegment {
+  arabicTranslit: string;
+  hebrewMeaning: string;
+}
+
+export interface StoryQuestion {
+  question: string;
+  questionHebrew: string;
+  correctAnswer: string;
+}
+
+export interface Story {
+  title: string;
+  segments: StorySegment[];
+  questions: StoryQuestion[];
+}
