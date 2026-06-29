@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { BookOpen } from "lucide-react";
 import type { ItemType } from "@prisma/client";
 import type { VocabularyWithHistory } from "@/types";
+import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { VocabSearchBar } from "@/components/vocabulary/VocabSearchBar";
 import { VocabFilterTabs } from "@/components/vocabulary/VocabFilterTabs";
@@ -83,7 +84,7 @@ export default function VocabularyPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10">
+    <PageShell>
       <ScreenHeader title="אוצר המילים שלי" />
       <div className="mb-4 flex flex-col gap-3">
         <VocabSearchBar value={search} onChange={setSearch} searching={searching && !loading} />
@@ -139,6 +140,6 @@ export default function VocabularyPage() {
           loading={saving}
         />
       )}
-    </main>
+    </PageShell>
   );
 }

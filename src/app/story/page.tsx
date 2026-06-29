@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { BookOpenText } from "lucide-react";
 import type { Story, StoryQuestion } from "@/types";
+import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -87,7 +88,7 @@ export default function StoryPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10">
+    <PageShell>
       <ScreenHeader title="סיפור והבנת הנקרא" />
 
       {phase === "idle" && (
@@ -149,6 +150,6 @@ export default function StoryPage() {
           onRestart={handleRestart}
         />
       )}
-    </main>
+    </PageShell>
   );
 }

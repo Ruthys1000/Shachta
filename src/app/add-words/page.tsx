@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 import type { ParsedVocabItem, BulkVocabConflict, BulkVocabItem, DuplicateResolution } from "@/types";
+import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Button } from "@/components/ui/Button";
 import { ParseInputForm } from "@/components/add-words/ParseInputForm";
@@ -131,7 +132,7 @@ export default function AddWordsPage() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10">
+    <PageShell>
       <ScreenHeader title="הוספת מילים" />
 
       {phase === "input" && (
@@ -182,6 +183,6 @@ export default function AddWordsPage() {
           onResolve={handleResolve}
         />
       )}
-    </main>
+    </PageShell>
   );
 }

@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-react";
 
 export function ScreenHeader({ title }: { title: string }) {
   return (
-    <div className="mb-4 flex items-center gap-2">
+    <div className="mb-4 flex items-center gap-2 lg:mb-6">
       <Link
         href="/"
         className="rounded-full p-2 text-muted transition hover:bg-muted-soft"
@@ -11,7 +11,7 @@ export function ScreenHeader({ title }: { title: string }) {
       >
         <ChevronRight className="size-5" />
       </Link>
-      <h1 className="text-lg font-bold">{title}</h1>
+      <h1 className="text-lg font-bold lg:text-xl">{title}</h1>
     </div>
   );
 }

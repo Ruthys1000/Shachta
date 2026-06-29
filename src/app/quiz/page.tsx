@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
 import type { Quiz, QuizQuestion } from "@/types";
+import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -111,7 +112,7 @@ export default function QuizPage() {
     submitted && currentCorrect === true && !!quiz?.questions[currentIndex].options?.length;
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10">
+    <PageShell>
       <ScreenHeader title="מבדק תרגול" />
 
       {phase === "idle" && (
@@ -168,6 +169,6 @@ export default function QuizPage() {
           onRestart={handleRestart}
         />
       )}
-    </main>
+    </PageShell>
   );
 }

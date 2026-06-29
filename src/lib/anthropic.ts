@@ -26,9 +26,15 @@ interface ToolDefinition {
 
 const DEFAULT_MAX_TOKENS = 8192;
 
+function cacheableSystem(system: string): Anthropic.TextBlockParam[] {
+  return [{ type: "text", text: system, cache_control: { type: "ephemeral" } }];
+}
+
 async function requestToolUse(
   toolName: string,
-  params: Omit<Anthropic.MessageCreateParamsNonStreaming, "tools" | "tool_choice">,
+  params: Omit<Anthropic.MessageCreateParamsNonStreaming, "tools" | "tool_choice" | "system"> & {
+    system: string;
+  },
   tool: ToolDefinition
 ): Promise<unknown> {
   const budget = await getBudgetStatus();
@@ -40,6 +46,7 @@ async function requestToolUse(
   try {
     response = await anthropic.messages.create({
       ...params,
+      system: cacheableSystem(params.system),
       tools: [tool as Anthropic.Tool],
       tool_choice: { type: "tool", name: tool.name },
     });
