@@ -111,6 +111,10 @@ export default function Home() {
           onCancel={() => setConfirmingLogout(false)}
         />
       )}
+
+      <footer className="mt-10 border-t border-border pt-6 text-center text-xs text-muted">
+        אפליקציית &quot;שחתה&quot; אוספת מילים מהשיעורים שאת מעלה, ובונה סביבן תרגילים — מבדקים, משפטי בנייה וסיפורים, הכול בתעתיק עברי.
+      </footer>
     </PageShell>
   );
 }
