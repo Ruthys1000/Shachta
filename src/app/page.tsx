@@ -49,20 +49,7 @@ export default function Home() {
           description="צלמ/י עמודי שיעור וקבל/י לימוד ומבדק מותאמים"
           tag="סריקה + תרגול"
           emphasis="solid"
-        />
-        <HomeMenuButton
-          href="/add-words"
-          icon={ListPlus}
-          title="הוספת מילים"
-          description="הדבק/י מילים חדשות ושמור/י אותן באוצר המילים"
-          tag="הוספת תוכן"
-        />
-        <HomeMenuButton
-          href="/vocabulary"
-          icon={BookOpen}
-          title="אוצר המילים שלי"
-          description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
-          tag="ניהול ועיון"
+          highlighted
         />
         <HomeMenuButton
           href="/sentence-builder"
@@ -87,6 +74,20 @@ export default function Home() {
           description="סיפור קצר מהמילים שלך ושאלות הבנה בתעתיק"
           tag="תרגול הבנה"
           emphasis="solid"
+        />
+        <HomeMenuButton
+          href="/add-words"
+          icon={ListPlus}
+          title="הוספת מילים"
+          description="הדבק/י מילים חדשות ושמור/י אותן באוצר המילים"
+          tag="הוספת תוכן"
+        />
+        <HomeMenuButton
+          href="/vocabulary"
+          icon={BookOpen}
+          title="אוצר המילים שלי"
+          description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
+          tag="ניהול ועיון"
         />
       </div>
 
