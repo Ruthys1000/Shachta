@@ -27,7 +27,7 @@ export function HomeMenuButton({
 }) {
   return (
     <Link href={href} className="flex">
-      <Card className="flex h-full w-full items-center gap-4 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:scale-[0.99]">
+      <Card className="flex h-full w-full items-center gap-4 transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md active:scale-[0.99] lg:p-5">
         <div className={`rounded-full p-3 ${emphasisClasses[emphasis]}`}>
           <Icon className="size-6" />
         </div>
@@ -36,7 +36,7 @@ export function HomeMenuButton({
           <span className="inline-flex w-fit items-center rounded-full bg-muted-soft px-2 py-0.5 text-[11px] font-medium text-muted">
             {tag}
           </span>
-          <span className="text-sm text-muted">{description}</span>
+          <span className="text-sm text-muted lg:text-base">{description}</span>
         </div>
         <ChevronLeft className="size-5 text-muted" />
       </Card>

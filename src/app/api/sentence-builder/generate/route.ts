@@ -59,13 +59,15 @@ export async function POST(request: Request) {
     );
   }
 
-  const lessonsCompleted = await prisma.sentenceLessonHistory.count();
+  const [lessonsCompleted, recentHistory] = await Promise.all([
+    prisma.sentenceLessonHistory.count(),
+    prisma.sentenceLessonHistory.findMany({
+      orderBy: { createdAt: "desc" },
+      take: SENTENCE_LESSON_RECENT_TITLES_LIMIT,
+      select: { title: true },
+    }),
+  ]);
   const level = Math.min(SENTENCE_LESSON_MAX_LEVEL, Math.floor(lessonsCompleted / SENTENCE_LESSON_LEVEL_STEP) + 1);
-  const recentHistory = await prisma.sentenceLessonHistory.findMany({
-    orderBy: { createdAt: "desc" },
-    take: SENTENCE_LESSON_RECENT_TITLES_LIMIT,
-    select: { title: true },
-  });
 
   const system = buildSentenceLessonSystemPrompt(level);
   const userMessage = buildSentenceLessonUserMessage(

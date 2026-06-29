@@ -8,6 +8,7 @@ import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { AiBudgetBadge } from "@/components/home/AiBudgetBadge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Card } from "@/components/ui/Card";
+import { PageShell } from "@/components/ui/PageShell";
 
 export default function Home() {
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10 sm:max-w-3xl">
+    <PageShell wide>
       <div className="mb-8 flex flex-col items-center gap-3 pt-4 text-center sm:pt-10">
         <Card className="p-3">
           <Image
@@ -40,7 +41,7 @@ export default function Home() {
         <AiBudgetBadge />
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <HomeMenuButton
           href="/lesson"
           icon={ScanLine}
@@ -108,6 +109,6 @@ export default function Home() {
           onCancel={() => setConfirmingLogout(false)}
         />
       )}
-    </main>
+    </PageShell>
   );
 }

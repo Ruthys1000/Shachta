@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Blocks } from "lucide-react";
 import type { SentenceLesson, SentenceBuildExercise as SentenceBuildExerciseType } from "@/types";
+import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -99,7 +100,7 @@ export default function SentenceBuilderPage() {
   const isComplete = !!exercise && currentOrder.length === exercise.correctOrder.length;
 
   return (
-    <main className="mx-auto w-full max-w-2xl flex-1 p-4 pb-10">
+    <PageShell>
       <ScreenHeader title="לימוד בניית משפטים" />
 
       {phase === "idle" && (
@@ -168,6 +169,6 @@ export default function SentenceBuilderPage() {
           onRestart={handleRestart}
         />
       )}
-    </main>
+    </PageShell>
   );
 }
