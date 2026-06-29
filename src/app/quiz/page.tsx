@@ -12,6 +12,7 @@ import { QuizProgressBar } from "@/components/quiz/QuizProgressBar";
 import { QuestionCard } from "@/components/quiz/QuestionCard";
 import { QuizSummary } from "@/components/quiz/QuizSummary";
 import { isAnswerCorrect } from "@/lib/normalize";
+import { apiFetch } from "@/lib/apiFetch";
 
 type Phase = "idle" | "loading" | "running" | "summary" | "error";
 
@@ -34,19 +35,17 @@ export default function QuizPage() {
   async function handleGenerate() {
     setPhase("loading");
     setError(undefined);
-    const res = await fetch("/api/quiz/generate", {
+    const result = await apiFetch<{ quiz: Quiz }>("/api/quiz/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setError(body.error ?? "שגיאה ביצירת המבדק");
+    if (!result.ok) {
+      setError(result.error);
       setPhase("error");
       return;
     }
-    const data = await res.json();
-    setQuiz(data.quiz);
+    setQuiz(result.data.quiz);
     setCurrentIndex(0);
     setCurrentAnswer("");
     setSubmitted(false);

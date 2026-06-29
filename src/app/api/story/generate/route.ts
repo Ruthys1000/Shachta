@@ -7,6 +7,8 @@ import { containsArabicScript } from "@/lib/arabicScript";
 import { STORY_MIN_VOCAB, STORY_MIN_SEGMENTS, STORY_MIN_QUESTIONS } from "@/lib/constants";
 import type { Story, StorySegment, StoryQuestion } from "@/types";
 
+export const maxDuration = 60;
+
 function validateSegments(segments: StorySegment[]): StorySegment[] {
   return segments.filter((s) => !containsArabicScript([s.arabicTranslit, s.hebrewMeaning]));
 }

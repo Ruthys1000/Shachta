@@ -13,6 +13,7 @@ import { RuleExplanationCard } from "@/components/sentence-builder/RuleExplanati
 import { ExampleBreakdownCard } from "@/components/sentence-builder/ExampleBreakdownCard";
 import { SentenceBuildExercise } from "@/components/sentence-builder/SentenceBuildExercise";
 import { SentenceBuilderSummary } from "@/components/sentence-builder/SentenceBuilderSummary";
+import { apiFetch } from "@/lib/apiFetch";
 
 type Phase = "idle" | "loading" | "learning" | "practice" | "summary" | "error";
 
@@ -39,19 +40,17 @@ export default function SentenceBuilderPage() {
   async function handleGenerate() {
     setPhase("loading");
     setError(undefined);
-    const res = await fetch("/api/sentence-builder/generate", {
+    const result = await apiFetch<{ lesson: SentenceLesson }>("/api/sentence-builder/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
     });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setError(body.error ?? "שגיאה ביצירת השיעור");
+    if (!result.ok) {
+      setError(result.error);
       setPhase("error");
       return;
     }
-    const data = await res.json();
-    setLesson(data.lesson);
+    setLesson(result.data.lesson);
     setPhase("learning");
   }
 
