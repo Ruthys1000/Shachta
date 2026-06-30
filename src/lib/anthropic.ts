@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { CLAUDE_MODEL } from "@/lib/constants";
 import { getBudgetStatus, recordUsage } from "@/lib/aiUsage";
 
-const CLAUDE_CALL_TIMEOUT_MS = 25_000;
+const CLAUDE_CALL_TIMEOUT_MS = 45_000;
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
