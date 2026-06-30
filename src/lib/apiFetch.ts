@@ -1,8 +1,9 @@
 type ApiResult<T> = { ok: true; data: T } | { ok: false; error: string };
 
-// Just under Vercel Hobby's 60s serverless function ceiling, so a hung request
-// surfaces as a clear error instead of leaving the caller's loading state stuck forever.
-const REQUEST_TIMEOUT_MS = 58_000;
+// Just under Vercel Pro's 120s serverless function ceiling (see maxDuration in the
+// AI routes), so a hung request surfaces as a clear error instead of leaving the
+// caller's loading state stuck forever.
+const REQUEST_TIMEOUT_MS = 115_000;
 
 export async function apiFetch<T = unknown>(url: string, init?: RequestInit): Promise<ApiResult<T>> {
   const controller = new AbortController();

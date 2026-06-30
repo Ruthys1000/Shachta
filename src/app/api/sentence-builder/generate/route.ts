@@ -18,7 +18,7 @@ import {
 } from "@/lib/constants";
 import type { SentenceLessonExample, SentenceBuildExercise } from "@/types";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 function validateExamples(examples: SentenceLessonExample[]): SentenceLessonExample[] {
   return examples.filter(
