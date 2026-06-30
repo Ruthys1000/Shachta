@@ -99,7 +99,21 @@ export default function LessonPage() {
     setLessonTitle(data.lessonTitle);
     setDialogue(data.dialogue);
     setItems(data.vocabulary);
-    setPhase(data.dialogue.length > 0 ? "dialogue" : "confirm-vocab");
+    if (data.dialogue.length > 0) {
+      setPhase("dialogue");
+    } else if (data.vocabulary.length > 0) {
+      setPhase("confirm-vocab");
+    } else {
+      startStudy([]);
+    }
+  }
+
+  function handleDialogueDone() {
+    if (items.length > 0) {
+      setPhase("confirm-vocab");
+    } else {
+      startStudy([]);
+    }
   }
 
   function updateItem(next: ParsedVocabItem) {
@@ -307,7 +321,7 @@ export default function LessonPage() {
       {phase === "parsing" && <ParsingStatus steps={LESSON_PARSE_STEPS} />}
 
       {phase === "dialogue" && dialogue.length > 0 && (
-        <DialogueWalkthrough lines={dialogue} onDone={() => setPhase("confirm-vocab")} />
+        <DialogueWalkthrough lines={dialogue} onDone={handleDialogueDone} />
       )}
 
       {phase === "confirm-vocab" && (
@@ -351,7 +365,7 @@ export default function LessonPage() {
         <EmptyState
           icon={CheckCircle2}
           title="אין מילים ללמוד בשיעור הזה"
-          description="כל המילים נשמרו אך לא נותרו פריטים ללימוד"
+          description="לא נמצאו מילים חדשות ללימוד מהשיעור הזה"
           action={
             <Link href="/">
               <Button>לדף הבית</Button>

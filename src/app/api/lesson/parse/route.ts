@@ -33,7 +33,9 @@ export async function POST(request: Request) {
           tool: SUBMIT_LESSON_PARSE_TOOL,
         });
         const parsed = aiLessonParseResponseSchema.safeParse(result);
-        return parsed.success ? parsed.data : null;
+        if (!parsed.success) return null;
+        if (parsed.data.vocabulary.length === 0 && parsed.data.dialogue.length === 0) return null;
+        return parsed.data;
       } catch (err) {
         if (err instanceof ClaudeToolCallError) return null;
         throw err;
