@@ -47,7 +47,9 @@ export function ImageUploadForm({
   async function handleSubmit() {
     setCompressing(true);
     try {
-      const compressed = await Promise.all(images.map((img) => compressImageToBase64(img.file)));
+      const compressed = await Promise.all(
+        images.map((img) => compressImageToBase64(img.file, images.length))
+      );
       onSubmit(compressed);
     } finally {
       setCompressing(false);

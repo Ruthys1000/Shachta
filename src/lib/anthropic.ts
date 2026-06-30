@@ -132,12 +132,20 @@ export async function callClaudeVisionForJSON({
   );
 }
 
+// Leaves headroom under the client's 115s abort and the route's 120s maxDuration
+// ceiling: a retry is only attempted if there's still enough budget left for
+// another full-length Claude call (e.g. a slow multi-image vision request), so a
+// doomed second attempt can't push the response past those limits.
+const TOOL_RETRY_BUDGET_MS = 75_000;
+
 export async function withToolRetry<T>(
   attempt: () => Promise<T | null>,
   maxAttempts = 2
 ): Promise<T | null> {
+  const start = Date.now();
   let result: T | null = null;
   for (let i = 0; i < maxAttempts && !result; i++) {
+    if (i > 0 && Date.now() - start + CLAUDE_CALL_TIMEOUT_MS > TOOL_RETRY_BUDGET_MS) break;
     result = await attempt();
   }
   return result;
