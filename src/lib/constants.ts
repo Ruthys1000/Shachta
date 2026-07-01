@@ -14,6 +14,9 @@ export const CLAUDE_OUTPUT_PRICE_PER_MTOK_USD = 15;
 export const QUIZ_MIN_QUESTIONS = 3;
 export const QUIZ_MAX_QUESTIONS = 10;
 export const QUIZ_MULTIPLE_CHOICE_MIN_VOCAB = 4;
+// Size of the candidate word pool sampled (weighted by practice history) before
+// asking Claude to build a quiz, so questions rotate and skew toward weak words.
+export const QUIZ_CANDIDATE_POOL_SIZE = 15;
 
 export const STORY_MIN_VOCAB = 5;
 export const STORY_MIN_SEGMENTS = 4;
