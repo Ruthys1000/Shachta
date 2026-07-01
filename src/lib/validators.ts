@@ -108,6 +108,7 @@ export const aiStoryQuestionSchema = z.object({
   question: z.string(),
   questionHebrew: z.string(),
   correctAnswer: z.string(),
+  options: z.array(z.string()),
 });
 
 export const aiStoryResponseSchema = z.object({

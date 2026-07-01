@@ -14,9 +14,13 @@ function validateSegments(segments: StorySegment[]): StorySegment[] {
 }
 
 function validateQuestions(questions: StoryQuestion[]): StoryQuestion[] {
-  return questions.filter(
-    (q) => !containsArabicScript([q.question, q.questionHebrew, q.correctAnswer])
-  );
+  return questions.filter((q) => {
+    if (containsArabicScript([q.question, q.questionHebrew, q.correctAnswer, ...q.options])) {
+      return false;
+    }
+    if (q.options.length !== 4 || !q.options.includes(q.correctAnswer)) return false;
+    return true;
+  });
 }
 
 export async function POST(request: Request) {
