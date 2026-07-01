@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/Card";
-import { TextField } from "@/components/ui/TextField";
+import { MultipleChoiceOptions } from "@/components/quiz/MultipleChoiceOptions";
 import { AnswerFeedback } from "@/components/quiz/AnswerFeedback";
 import { TranslateReveal } from "@/components/story/TranslateReveal";
 import type { StoryQuestion } from "@/types";
@@ -26,12 +26,12 @@ export function StoryQuestionCard({
       </p>
       <TranslateReveal key={questionIndex} hebrew={question.questionHebrew} align="start" />
 
-      <TextField
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="הקלד/י את התשובה כאן"
-        disabled={submitted}
-        autoFocus
+      <MultipleChoiceOptions
+        options={question.options}
+        selected={value || null}
+        correctAnswer={question.correctAnswer}
+        submitted={submitted}
+        onSelect={onChange}
       />
 
       {submitted && correct !== null && (

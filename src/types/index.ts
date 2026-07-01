@@ -80,6 +80,7 @@ export interface StoryQuestion {
   question: string;
   questionHebrew: string;
   correctAnswer: string;
+  options: string[];
 }
 
 export interface Story {

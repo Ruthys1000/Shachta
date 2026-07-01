@@ -13,7 +13,6 @@ import { QuizProgressBar } from "@/components/quiz/QuizProgressBar";
 import { StoryReader } from "@/components/story/StoryReader";
 import { StoryQuestionCard } from "@/components/story/StoryQuestionCard";
 import { StorySummary } from "@/components/story/StorySummary";
-import { isAnswerCorrect } from "@/lib/normalize";
 import { apiFetch } from "@/lib/apiFetch";
 
 type Phase = "idle" | "loading" | "reading" | "questions" | "summary" | "error";
@@ -63,7 +62,7 @@ export default function StoryPage() {
   function handleSubmitAnswer() {
     if (!story) return;
     const question = story.questions[questionIndex];
-    const correct = isAnswerCorrect(currentAnswer, question.correctAnswer);
+    const correct = currentAnswer === question.correctAnswer;
     setCurrentCorrect(correct);
     setSubmitted(true);
     setAnswered((prev) => [...prev, { question, userAnswer: currentAnswer, correct }]);
