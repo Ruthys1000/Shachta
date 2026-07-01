@@ -4,10 +4,12 @@ import { callClaudeForJSON, ClaudeToolCallError, BudgetExceededError } from "@/l
 import { SUBMIT_QUIZ_TOOL, buildQuizSystemPrompt, buildQuizUserMessage } from "@/lib/ai/quizPrompt";
 import { quizGenerateRequestSchema, aiQuizResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
+import { selectQuizVocabulary } from "@/lib/quizSelection";
 import {
   QUIZ_MIN_QUESTIONS,
   QUIZ_MAX_QUESTIONS,
   QUIZ_MULTIPLE_CHOICE_MIN_VOCAB,
+  QUIZ_CANDIDATE_POOL_SIZE,
 } from "@/lib/constants";
 import type { Quiz, QuizQuestion } from "@/types";
 
@@ -36,14 +38,16 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  const vocab = await prisma.vocabulary.findMany({
+  const candidates = await prisma.vocabulary.findMany({
     where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
-    select: { id: true, arabicTranslit: true, hebrewMeaning: true, itemType: true },
+    include: { practiceHistory: true },
   });
 
-  if (vocab.length === 0) {
+  if (candidates.length === 0) {
     return NextResponse.json({ error: "אין עדיין מילים במאגר" }, { status: 400 });
   }
+
+  const vocab = selectQuizVocabulary(candidates, QUIZ_CANDIDATE_POOL_SIZE);
 
   const validVocabIds = new Set(vocab.map((v) => v.id));
   const allowMultipleChoice = vocab.length >= QUIZ_MULTIPLE_CHOICE_MIN_VOCAB;
