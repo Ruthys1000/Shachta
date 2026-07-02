@@ -78,6 +78,15 @@ export default function StoryPage() {
       return;
     }
     setPhase("summary");
+    fetch("/api/story/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: story.title,
+        correctCount: answered.filter((a) => a.correct).length,
+        wrongCount: answered.filter((a) => !a.correct).length,
+      }),
+    });
   }
 
   function handleRestart() {

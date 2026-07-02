@@ -40,6 +40,7 @@ export const XP_PER_VOCAB_ITEM = 5;
 export const XP_PER_CORRECT_ANSWER = 2;
 export const XP_PER_WRONG_ANSWER = 1;
 export const XP_PER_SENTENCE_LESSON = 15;
+export const XP_PER_STORY_COMPLETED = 15;
 // Cumulative XP required for level n = LEVEL_XP_BASE * (n-1) * n.
 export const LEVEL_XP_BASE = 25;
 // Distinct vocabulary items practiced via quiz (PracticeHistory.lastPracticed) per UTC day.

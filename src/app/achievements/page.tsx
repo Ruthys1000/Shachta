@@ -49,7 +49,7 @@ export default function AchievementsPage() {
           </div>
 
           <footer className="mt-10 border-t border-border pt-6 text-center text-xs text-muted">
-            ההישגים מחושבים מאוצר המילים, מבדקים ושיעורי בניית משפטים. תרגול בסיפורים לא נספר עדיין.
+            ההישגים מחושבים מאוצר המילים, מבדקים, שיעורי בניית משפטים וסיפורים והבנת הנקרא.
           </footer>
         </>
       )}

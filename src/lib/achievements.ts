@@ -123,10 +123,48 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: "ATTEMPTS_500",
     title: "מתרגלת נלהבת",
-    description: "500 תשובות במבדקים — כל ניסיון הוא למידה",
+    description: "500 תשובות במבדקים, תרגילי משפטים וסיפורים — כל ניסיון הוא למידה",
     icon: "Zap",
     target: 500,
-    getCurrent: (stats) => stats.totalCorrect + stats.totalWrong,
+    getCurrent: (stats) =>
+      stats.totalCorrect +
+      stats.totalWrong +
+      stats.sentenceExerciseCorrect +
+      stats.sentenceExerciseWrong +
+      stats.storyQuestionCorrect +
+      stats.storyQuestionWrong,
+  },
+  {
+    id: "SENTENCE_EXERCISE_50",
+    title: "תרגול מדויק",
+    description: "50 תרגילי הרכבת משפט נכונים בלימוד בניית משפטים",
+    icon: "CheckSquare",
+    target: 50,
+    getCurrent: (stats) => stats.sentenceExerciseCorrect,
+  },
+  {
+    id: "STORY_1",
+    title: "הסיפור הראשון",
+    description: "סיימת סיפור והבנת הנקרא ראשון 📖",
+    icon: "BookOpenText",
+    target: 1,
+    getCurrent: (stats) => stats.storiesCompleted,
+  },
+  {
+    id: "STORY_10",
+    title: "אספנית סיפורים",
+    description: "10 סיפורים הושלמו — איזו התמדה!",
+    icon: "Library",
+    target: 10,
+    getCurrent: (stats) => stats.storiesCompleted,
+  },
+  {
+    id: "STORY_CORRECT_50",
+    title: "מבינה את הנקרא",
+    description: "50 תשובות נכונות בשאלות הבנת הנקרא",
+    icon: "Glasses",
+    target: 50,
+    getCurrent: (stats) => stats.storyQuestionCorrect,
   },
 ];
 

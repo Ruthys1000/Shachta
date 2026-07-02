@@ -1,10 +1,14 @@
 import {
   Award,
   Blocks,
+  BookOpenText,
   CheckCircle2,
+  CheckSquare,
   Crown,
   Gem,
+  Glasses,
   Layers,
+  Library,
   Medal,
   MessageSquare,
   Puzzle,
@@ -31,4 +35,8 @@ export const achievementIcons: Record<string, LucideIcon> = {
   MessageSquare,
   ScrollText,
   Zap,
+  CheckSquare,
+  BookOpenText,
+  Library,
+  Glasses,
 };

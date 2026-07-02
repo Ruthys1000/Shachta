@@ -4,6 +4,7 @@ import {
   LEVEL_XP_BASE,
   XP_PER_CORRECT_ANSWER,
   XP_PER_SENTENCE_LESSON,
+  XP_PER_STORY_COMPLETED,
   XP_PER_VOCAB_ITEM,
   XP_PER_WRONG_ANSWER,
 } from "@/lib/constants";
@@ -16,6 +17,11 @@ export interface GamificationStats {
   totalCorrect: number;
   totalWrong: number;
   lessonsCompleted: number;
+  sentenceExerciseCorrect: number;
+  sentenceExerciseWrong: number;
+  storiesCompleted: number;
+  storyQuestionCorrect: number;
+  storyQuestionWrong: number;
   practicedToday: number;
 }
 
@@ -40,12 +46,19 @@ function startOfTodayUtc(): Date {
 }
 
 export async function getGamificationStats(): Promise<GamificationStats> {
-  const [byType, historySums, lessonsCompleted, practicedToday] = await Promise.all([
+  const [byType, historySums, sentenceSums, storyAggregate, practicedToday] = await Promise.all([
     prisma.vocabulary.groupBy({ by: ["itemType"], _count: true }),
     prisma.practiceHistory.aggregate({
       _sum: { correctCount: true, wrongCount: true },
     }),
-    prisma.sentenceLessonHistory.count(),
+    prisma.sentenceLessonHistory.aggregate({
+      _count: true,
+      _sum: { correctCount: true, wrongCount: true },
+    }),
+    prisma.storyHistory.aggregate({
+      _count: true,
+      _sum: { correctCount: true, wrongCount: true },
+    }),
     prisma.practiceHistory.count({
       where: { lastPracticed: { gte: startOfTodayUtc() } },
     }),
@@ -61,7 +74,12 @@ export async function getGamificationStats(): Promise<GamificationStats> {
     sentenceCount,
     totalCorrect: historySums._sum.correctCount ?? 0,
     totalWrong: historySums._sum.wrongCount ?? 0,
-    lessonsCompleted,
+    lessonsCompleted: sentenceSums._count,
+    sentenceExerciseCorrect: sentenceSums._sum.correctCount ?? 0,
+    sentenceExerciseWrong: sentenceSums._sum.wrongCount ?? 0,
+    storiesCompleted: storyAggregate._count,
+    storyQuestionCorrect: storyAggregate._sum.correctCount ?? 0,
+    storyQuestionWrong: storyAggregate._sum.wrongCount ?? 0,
     practicedToday,
   };
 }
@@ -71,7 +89,12 @@ export function computeXp(stats: GamificationStats): number {
     stats.vocabularyCount * XP_PER_VOCAB_ITEM +
     stats.totalCorrect * XP_PER_CORRECT_ANSWER +
     stats.totalWrong * XP_PER_WRONG_ANSWER +
-    stats.lessonsCompleted * XP_PER_SENTENCE_LESSON
+    stats.lessonsCompleted * XP_PER_SENTENCE_LESSON +
+    stats.sentenceExerciseCorrect * XP_PER_CORRECT_ANSWER +
+    stats.sentenceExerciseWrong * XP_PER_WRONG_ANSWER +
+    stats.storiesCompleted * XP_PER_STORY_COMPLETED +
+    stats.storyQuestionCorrect * XP_PER_CORRECT_ANSWER +
+    stats.storyQuestionWrong * XP_PER_WRONG_ANSWER
   );
 }
 

@@ -83,10 +83,15 @@ export default function SentenceBuilderPage() {
       return;
     }
     setPhase("summary");
+    const finalAnswered = [...answered];
     fetch("/api/sentence-builder/complete", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: lesson.title }),
+      body: JSON.stringify({
+        title: lesson.title,
+        correctCount: finalAnswered.filter((a) => a.correct).length,
+        wrongCount: finalAnswered.filter((a) => !a.correct).length,
+      }),
     });
   }
 
