@@ -132,7 +132,7 @@ export default function AddWordsPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell wide>
       <ScreenHeader title="הוספת מילים" />
 
       {phase === "input" && (

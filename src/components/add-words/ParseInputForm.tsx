@@ -28,7 +28,7 @@ export function ParseInputForm({
         onChange={(e) => onChange(e.target.value)}
         placeholder={"שוכרן - תודה\nכיף חאלכ = מה שלומך\nאהלן"}
         rows={10}
-        className="min-h-48"
+        className="min-h-48 lg:min-h-64"
       />
       {error && <p className="text-sm text-danger">{error}</p>}
       <Button

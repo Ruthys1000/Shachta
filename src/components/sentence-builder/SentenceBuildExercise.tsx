@@ -61,8 +61,8 @@ export function SentenceBuildExercise({
   }
 
   return (
-    <Card className="flex flex-col gap-4">
-      <p className="text-base font-medium">בנה/י את המשפט: {exercise.hebrewMeaning}</p>
+    <Card className="flex flex-col gap-4 p-4 lg:gap-5 lg:p-6">
+      <p className="text-base font-medium lg:text-lg">בנה/י את המשפט: {exercise.hebrewMeaning}</p>
 
       <div
         className="flex min-h-14 flex-wrap items-center justify-end gap-2 rounded-xl border border-dashed border-border bg-muted-soft p-3"

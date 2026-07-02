@@ -104,7 +104,7 @@ export default function VocabularyPage() {
           : `${totalWords} מילים`;
 
   return (
-    <PageShell>
+    <PageShell wide>
       <ScreenHeader
         title="אוצר המילים שלי"
         badge={
@@ -116,7 +116,9 @@ export default function VocabularyPage() {
         }
       />
       <div className="mb-4 flex flex-col gap-3">
-        <VocabSearchBar value={search} onChange={setSearch} searching={searching && !loading} />
+        <div className="lg:max-w-sm">
+          <VocabSearchBar value={search} onChange={setSearch} searching={searching && !loading} />
+        </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <VocabFilterTabs value={type} onChange={setType} />
           <VocabSortSelect value={sort} onChange={setSort} />
@@ -124,7 +126,7 @@ export default function VocabularyPage() {
       </div>
 
       {loading ? (
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
           {Array.from({ length: 5 }).map((_, i) => (
             <VocabRowSkeleton key={i} />
           ))}
@@ -136,7 +138,7 @@ export default function VocabularyPage() {
           description={search || type !== "ALL" ? "נסה/י חיפוש אחר" : "התחל/י בהוספת מילים חדשות"}
         />
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
           {items.map((item) => (
             <VocabRow
               key={item.id}

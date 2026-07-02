@@ -11,7 +11,7 @@ export function ConfirmTable({
   onDelete: (tempId: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
       {items.map((item) => (
         <ConfirmRow
           key={item.tempId}

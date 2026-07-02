@@ -83,7 +83,7 @@ export function ImageUploadForm({
       </label>
 
       {images.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
           {images.map((img, index) => (
             <div key={img.id} className="relative aspect-square overflow-hidden rounded-xl border border-border">
               {/* eslint-disable-next-line @next/next/no-img-element */}
