@@ -5,6 +5,7 @@ import { SUBMIT_STORY_TOOL, buildStorySystemPrompt, buildStoryUserMessage } from
 import { storyGenerateRequestSchema, aiStoryResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
 import { STORY_MIN_VOCAB, STORY_MIN_SEGMENTS, STORY_MIN_QUESTIONS } from "@/lib/constants";
+import { shuffle } from "@/lib/shuffle";
 import type { Story, StorySegment, StoryQuestion } from "@/types";
 
 export const maxDuration = 120;
@@ -101,10 +102,12 @@ export async function POST(request: Request) {
     );
   }
 
+  // The model tends to list the correct answer first among options, so shuffle
+  // before serving — matching against correctAnswer is by value, not index.
   const story: Story = {
     title: attempt.title,
     segments: attempt.segments,
-    questions: attempt.questions,
+    questions: attempt.questions.map((q) => ({ ...q, options: shuffle(q.options) })),
   };
 
   return NextResponse.json({ story });

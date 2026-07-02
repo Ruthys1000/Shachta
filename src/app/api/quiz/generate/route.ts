@@ -5,6 +5,7 @@ import { SUBMIT_QUIZ_TOOL, buildQuizSystemPrompt, buildQuizUserMessage } from "@
 import { quizGenerateRequestSchema, aiQuizResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
 import { selectQuizVocabulary } from "@/lib/quizSelection";
+import { shuffle } from "@/lib/shuffle";
 import {
   QUIZ_MIN_QUESTIONS,
   QUIZ_MAX_QUESTIONS,
@@ -102,9 +103,13 @@ export async function POST(request: Request) {
     );
   }
 
+  // The model tends to list the correct answer first among options, so shuffle
+  // before serving — matching against correctAnswer is by value, not index.
   const quiz: Quiz = {
     title: attempt.title,
-    questions: attempt.questions.slice(0, questionCount),
+    questions: attempt.questions.slice(0, questionCount).map((q) =>
+      q.options && q.options.length > 1 ? { ...q, options: shuffle(q.options) } : q
+    ),
   };
 
   return NextResponse.json({ quiz });
