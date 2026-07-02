@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ListPlus, BookOpen, BookOpenText, Sparkles, ScanLine, LogOut, Blocks } from "lucide-react";
+import { ListPlus, BookOpen, BookOpenText, Sparkles, ScanLine, LogOut, Blocks, Award } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { AiBudgetBadge } from "@/components/home/AiBudgetBadge";
 import { GreetingBanner } from "@/components/home/GreetingBanner";
+import { GamificationPanel } from "@/components/home/GamificationPanel";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { Card } from "@/components/ui/Card";
 import { PageShell } from "@/components/ui/PageShell";
@@ -41,6 +42,7 @@ export default function Home() {
         <p className="text-sm text-muted">תרגול אישי של ערבית מדוברת בתעתיק עברי</p>
         <GreetingBanner />
         <AiBudgetBadge />
+        <GamificationPanel />
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -89,6 +91,14 @@ export default function Home() {
           title="אוצר המילים שלי"
           description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
           tag="ניהול ועיון"
+        />
+        <HomeMenuButton
+          href="/achievements"
+          icon={Award}
+          title="הישגים"
+          description="עקבי אחרי הרמה, היעד היומי וההישגים שצברת"
+          tag="התקדמות"
+          emphasis="soft"
         />
       </div>
 
