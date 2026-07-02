@@ -108,12 +108,21 @@ export default function LessonPage() {
     }
   }
 
+  function dialogueToVocabItems(lines: DialogueLine[]): ParsedVocabItem[] {
+    return lines.map((line) => ({
+      tempId: crypto.randomUUID(),
+      arabicTranslit: line.arabicTranslit,
+      hebrewMeaning: line.hebrewMeaning,
+      itemType: "SENTENCE",
+      needsReview: false,
+    }));
+  }
+
   function handleDialogueDone() {
-    if (items.length > 0) {
-      setPhase("confirm-vocab");
-    } else {
-      startStudy([]);
+    if (items.length === 0) {
+      setItems(dialogueToVocabItems(dialogue));
     }
+    setPhase("confirm-vocab");
   }
 
   function updateItem(next: ParsedVocabItem) {
