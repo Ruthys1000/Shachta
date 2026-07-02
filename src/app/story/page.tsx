@@ -96,7 +96,7 @@ export default function StoryPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell wide>
       <ScreenHeader title="סיפור והבנת הנקרא" />
 
       {phase === "idle" && (

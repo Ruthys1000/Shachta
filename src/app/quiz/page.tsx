@@ -112,7 +112,7 @@ export default function QuizPage() {
     submitted && currentCorrect === true && !!quiz?.questions[currentIndex].options?.length;
 
   return (
-    <PageShell>
+    <PageShell wide>
       <ScreenHeader title="מבדק תרגול" />
 
       {phase === "idle" && (

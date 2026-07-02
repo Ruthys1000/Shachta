@@ -21,10 +21,10 @@ export function DialogueWalkthrough({
     <div className="flex flex-col gap-4">
       <QuizProgressBar current={index} total={lines.length} />
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 py-10 text-center">
+      <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 py-10 text-center lg:px-10 lg:py-14">
         <MessageCircle className="mx-auto size-6 text-muted" />
         {line.speaker && <span className="text-xs font-medium text-muted">{line.speaker}</span>}
-        <p className="text-lg font-semibold" dir="ltr">
+        <p className="text-lg font-semibold lg:text-xl" dir="ltr">
           {line.arabicTranslit}
         </p>
         <p className="text-base text-muted">{line.hebrewMeaning}</p>

@@ -322,7 +322,7 @@ export default function LessonPage() {
   }
 
   return (
-    <PageShell>
+    <PageShell wide>
       <ScreenHeader title={lessonTitle ?? "שיעור סרוק"} />
 
       {phase === "upload" && <ImageUploadForm onSubmit={handleUpload} loading={false} error={parseError} />}

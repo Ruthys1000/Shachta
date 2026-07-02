@@ -22,9 +22,9 @@ export function StoryReader({
     <div className="flex flex-col gap-4">
       <QuizProgressBar current={index} total={segments.length} />
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 py-10 text-center">
+      <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card px-6 py-10 text-center lg:px-10 lg:py-14">
         <BookOpenText className="mx-auto size-6 text-muted" />
-        <p className="text-lg font-semibold" dir="ltr">
+        <p className="text-lg font-semibold lg:text-xl" dir="ltr">
           {segment.arabicTranslit}
         </p>
         <TranslateReveal key={index} hebrew={segment.hebrewMeaning} />

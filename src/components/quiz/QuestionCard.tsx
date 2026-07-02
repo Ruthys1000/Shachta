@@ -20,8 +20,8 @@ export function QuestionCard({
   const hasOptions = !!question.options && question.options.length > 0;
 
   return (
-    <Card className="flex flex-col gap-4">
-      <p className="text-lg font-semibold">{question.question}</p>
+    <Card className="flex flex-col gap-4 p-4 lg:gap-5 lg:p-6">
+      <p className="text-lg font-semibold lg:text-xl">{question.question}</p>
 
       {hasOptions ? (
         <MultipleChoiceOptions

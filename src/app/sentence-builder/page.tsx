@@ -105,7 +105,7 @@ export default function SentenceBuilderPage() {
   const isComplete = !!exercise && currentOrder.length === exercise.correctOrder.length;
 
   return (
-    <PageShell>
+    <PageShell wide>
       <ScreenHeader title="לימוד בניית משפטים" />
 
       {phase === "idle" && (
