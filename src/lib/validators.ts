@@ -147,4 +147,12 @@ export const aiSentenceLessonResponseSchema = z.object({
 
 export const sentenceLessonCompleteRequestSchema = z.object({
   title: z.string().trim().min(1).max(500),
+  correctCount: z.number().int().min(0),
+  wrongCount: z.number().int().min(0),
+});
+
+export const storyCompleteRequestSchema = z.object({
+  title: z.string().trim().min(1).max(500),
+  correctCount: z.number().int().min(0),
+  wrongCount: z.number().int().min(0),
 });

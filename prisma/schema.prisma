@@ -38,11 +38,23 @@ model PracticeHistory {
 }
 
 model SentenceLessonHistory {
-  id        String   @id @default(uuid())
-  title     String
-  createdAt DateTime @default(now()) @map("created_at")
+  id           String   @id @default(uuid())
+  title        String
+  correctCount Int      @default(0) @map("correct_count")
+  wrongCount   Int      @default(0) @map("wrong_count")
+  createdAt    DateTime @default(now()) @map("created_at")
 
   @@map("sentence_lesson_history")
+}
+
+model StoryHistory {
+  id           String   @id @default(uuid())
+  title        String
+  correctCount Int      @default(0) @map("correct_count")
+  wrongCount   Int      @default(0) @map("wrong_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("story_history")
 }
 
 model AiUsageLog {

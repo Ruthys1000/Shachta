@@ -33,5 +33,17 @@ export const SENTENCE_LESSON_MAX_EXERCISES = 5;
 // Lessons completed needed to advance one sentence-builder level.
 export const SENTENCE_LESSON_LEVEL_STEP = 3;
 export const SENTENCE_LESSON_MAX_LEVEL = 4;
+
+// Gamification: XP awarded per unit of existing activity (no new tables — derived
+// from Vocabulary/PracticeHistory/SentenceLessonHistory counts).
+export const XP_PER_VOCAB_ITEM = 5;
+export const XP_PER_CORRECT_ANSWER = 2;
+export const XP_PER_WRONG_ANSWER = 1;
+export const XP_PER_SENTENCE_LESSON = 15;
+export const XP_PER_STORY_COMPLETED = 15;
+// Cumulative XP required for level n = LEVEL_XP_BASE * (n-1) * n.
+export const LEVEL_XP_BASE = 25;
+// Distinct vocabulary items practiced via quiz (PracticeHistory.lastPracticed) per UTC day.
+export const DAILY_GOAL_TARGET = 10;
 // How many recently-taught rule titles to show the AI so it avoids repeating them.
 export const SENTENCE_LESSON_RECENT_TITLES_LIMIT = 15;
