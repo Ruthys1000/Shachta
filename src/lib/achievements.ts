@@ -49,6 +49,22 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     getCurrent: (stats) => stats.vocabularyCount,
   },
   {
+    id: "VOCAB_500",
+    title: "אספנית על",
+    description: "500 מילים באוצר — אוסף מרשים באמת",
+    icon: "Diamond",
+    target: 500,
+    getCurrent: (stats) => stats.vocabularyCount,
+  },
+  {
+    id: "VOCAB_1000",
+    title: "אלף מילים!",
+    description: "1000 מילים באוצר המילים שלך — הישג ענק",
+    icon: "Trophy",
+    target: 1000,
+    getCurrent: (stats) => stats.vocabularyCount,
+  },
+  {
     id: "CORRECT_25",
     title: "מתחילה בטוחה",
     description: "25 תשובות נכונות במבדקים",
@@ -81,6 +97,14 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     getCurrent: (stats) => stats.totalCorrect,
   },
   {
+    id: "CORRECT_1500",
+    title: "מומחית תרגול",
+    description: "1500 תשובות נכונות במבדקים",
+    icon: "GraduationCap",
+    target: 1500,
+    getCurrent: (stats) => stats.totalCorrect,
+  },
+  {
     id: "LESSON_1",
     title: "המשפט הראשון",
     description: "השלמת שיעור בניית משפטים ראשון",
@@ -105,6 +129,22 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     getCurrent: (stats) => stats.lessonsCompleted,
   },
   {
+    id: "LESSON_30",
+    title: "בקיאה בתחביר",
+    description: "30 שיעורי בניית משפטים הושלמו",
+    icon: "BookMarked",
+    target: 30,
+    getCurrent: (stats) => stats.lessonsCompleted,
+  },
+  {
+    id: "LESSON_50",
+    title: "מאסטרית משפטים",
+    description: "50 שיעורי בניית משפטים — שליטה מלאה",
+    icon: "Rocket",
+    target: 50,
+    getCurrent: (stats) => stats.lessonsCompleted,
+  },
+  {
     id: "PHRASE_10",
     title: "לומדת ביטויים",
     description: "10 ביטויים בערבית מדוברת באוצר שלך",
@@ -113,11 +153,27 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     getCurrent: (stats) => stats.phraseCount,
   },
   {
+    id: "PHRASE_25",
+    title: "אוצר ביטויים",
+    description: "25 ביטויים בערבית מדוברת באוצר שלך",
+    icon: "Quote",
+    target: 25,
+    getCurrent: (stats) => stats.phraseCount,
+  },
+  {
     id: "SENTENCE_10",
     title: "משפטים שלמים",
     description: "10 משפטים מלאים באוצר המילים שלך",
     icon: "ScrollText",
     target: 10,
+    getCurrent: (stats) => stats.sentenceCount,
+  },
+  {
+    id: "SENTENCE_25",
+    title: "משפטים רבים",
+    description: "25 משפטים מלאים באוצר המילים שלך",
+    icon: "Rows3",
+    target: 25,
     getCurrent: (stats) => stats.sentenceCount,
   },
   {
@@ -135,11 +191,33 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
       stats.storyQuestionWrong,
   },
   {
+    id: "ATTEMPTS_1000",
+    title: "בלתי נלאית",
+    description: "1000 תשובות בכל סוגי התרגול — התמדה מדהימה",
+    icon: "Infinity",
+    target: 1000,
+    getCurrent: (stats) =>
+      stats.totalCorrect +
+      stats.totalWrong +
+      stats.sentenceExerciseCorrect +
+      stats.sentenceExerciseWrong +
+      stats.storyQuestionCorrect +
+      stats.storyQuestionWrong,
+  },
+  {
     id: "SENTENCE_EXERCISE_50",
     title: "תרגול מדויק",
     description: "50 תרגילי הרכבת משפט נכונים בלימוד בניית משפטים",
     icon: "CheckSquare",
     target: 50,
+    getCurrent: (stats) => stats.sentenceExerciseCorrect,
+  },
+  {
+    id: "SENTENCE_EXERCISE_150",
+    title: "מומחית הרכבה",
+    description: "150 תרגילי הרכבת משפט נכונים",
+    icon: "Hammer",
+    target: 150,
     getCurrent: (stats) => stats.sentenceExerciseCorrect,
   },
   {
@@ -159,11 +237,27 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     getCurrent: (stats) => stats.storiesCompleted,
   },
   {
+    id: "STORY_25",
+    title: "קוראת מושבעת",
+    description: "25 סיפורים הושלמו",
+    icon: "Feather",
+    target: 25,
+    getCurrent: (stats) => stats.storiesCompleted,
+  },
+  {
     id: "STORY_CORRECT_50",
     title: "מבינה את הנקרא",
     description: "50 תשובות נכונות בשאלות הבנת הנקרא",
     icon: "Glasses",
     target: 50,
+    getCurrent: (stats) => stats.storyQuestionCorrect,
+  },
+  {
+    id: "STORY_CORRECT_150",
+    title: "קוראת מעמיקה",
+    description: "150 תשובות נכונות בשאלות הבנת הנקרא",
+    icon: "Eye",
+    target: 150,
     getCurrent: (stats) => stats.storyQuestionCorrect,
   },
 ];
