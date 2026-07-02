@@ -42,7 +42,7 @@ export const XP_PER_WRONG_ANSWER = 1;
 export const XP_PER_SENTENCE_LESSON = 15;
 export const XP_PER_STORY_COMPLETED = 15;
 // Cumulative XP required for level n = LEVEL_XP_BASE * (n-1) * n.
-export const LEVEL_XP_BASE = 25;
+export const LEVEL_XP_BASE = 40;
 // Distinct vocabulary items practiced via quiz (PracticeHistory.lastPracticed) per UTC day.
 export const DAILY_GOAL_TARGET = 10;
 // How many recently-taught rule titles to show the AI so it avoids repeating them.
