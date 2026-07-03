@@ -23,6 +23,7 @@ export interface GamificationStats {
   storyQuestionCorrect: number;
   storyQuestionWrong: number;
   practicedToday: number;
+  storyQuestionsToday: number;
 }
 
 export interface LevelProgress {
@@ -47,23 +48,31 @@ function startOfTodayUtc(): Date {
 }
 
 export async function getGamificationStats(): Promise<GamificationStats> {
-  const [byType, historySums, sentenceSums, storyAggregate, practicedToday] = await Promise.all([
-    prisma.vocabulary.groupBy({ by: ["itemType"], _count: true }),
-    prisma.practiceHistory.aggregate({
-      _sum: { correctCount: true, wrongCount: true },
-    }),
-    prisma.sentenceLessonHistory.aggregate({
-      _count: true,
-      _sum: { correctCount: true, wrongCount: true },
-    }),
-    prisma.storyHistory.aggregate({
-      _count: true,
-      _sum: { correctCount: true, wrongCount: true },
-    }),
-    prisma.practiceHistory.count({
-      where: { lastPracticed: { gte: startOfTodayUtc() } },
-    }),
-  ]);
+  const [byType, historySums, sentenceSums, storyAggregate, practicedToday, storyTodayAgg] =
+    await Promise.all([
+      prisma.vocabulary.groupBy({ by: ["itemType"], _count: true }),
+      prisma.practiceHistory.aggregate({
+        _sum: { correctCount: true, wrongCount: true },
+      }),
+      prisma.sentenceLessonHistory.aggregate({
+        _count: true,
+        _sum: { correctCount: true, wrongCount: true },
+      }),
+      prisma.storyHistory.aggregate({
+        _count: true,
+        _sum: { correctCount: true, wrongCount: true },
+      }),
+      prisma.practiceHistory.count({
+        where: { lastPracticed: { gte: startOfTodayUtc() } },
+      }),
+      prisma.storyHistory.aggregate({
+        _sum: { correctCount: true, wrongCount: true },
+        where: { createdAt: { gte: startOfTodayUtc() } },
+      }),
+    ]);
+
+  const storyQuestionsToday =
+    (storyTodayAgg._sum.correctCount ?? 0) + (storyTodayAgg._sum.wrongCount ?? 0);
 
   const phraseCount = byType.find((g) => g.itemType === "PHRASE")?._count ?? 0;
   const sentenceCount = byType.find((g) => g.itemType === "SENTENCE")?._count ?? 0;
@@ -82,6 +91,7 @@ export async function getGamificationStats(): Promise<GamificationStats> {
     storyQuestionCorrect: storyAggregate._sum.correctCount ?? 0,
     storyQuestionWrong: storyAggregate._sum.wrongCount ?? 0,
     practicedToday,
+    storyQuestionsToday,
   };
 }
 
@@ -127,7 +137,11 @@ export async function getGamificationSummary(): Promise<GamificationSummary> {
     xp,
     level: levelForXp(xp),
     levelProgress: levelProgress(xp),
-    dailyGoal: { current: stats.practicedToday, target: DAILY_GOAL_TARGET },
+    dailyGoal: {
+      // Quiz words practiced today + story questions answered today.
+      current: stats.practicedToday + stats.storyQuestionsToday,
+      target: DAILY_GOAL_TARGET,
+    },
     achievements: evaluateAchievements(stats),
     vocabularyCount: stats.vocabularyCount,
   };
