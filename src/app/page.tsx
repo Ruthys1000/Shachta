@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { ListPlus, BookOpen, BookOpenText, Sparkles, ScanLine, LogOut, Blocks, Award } from "lucide-react";
+import { ListPlus, BookOpen, Sparkles, ScanLine, LogOut, Award } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { AiBudgetBadge } from "@/components/home/AiBudgetBadge";
 import { GreetingBanner } from "@/components/home/GreetingBanner";
@@ -55,27 +55,11 @@ export default function Home() {
           emphasis="solid"
         />
         <HomeMenuButton
-          href="/sentence-builder"
-          icon={Blocks}
-          title="לימוד בניית משפטים"
-          description="למד/י איך מרכיבים משפט נכון מהמילים שלך, צעד-צעד"
-          tag="לימוד"
-          emphasis="solid"
-        />
-        <HomeMenuButton
-          href="/quiz"
+          href="/practice"
           icon={Sparkles}
-          title="צור מבדק חדש"
-          description="תרגול וחזרה על המילים שכבר שמורות באוצר"
-          tag="תרגול"
-          emphasis="solid"
-        />
-        <HomeMenuButton
-          href="/story"
-          icon={BookOpenText}
-          title="סיפור והבנת הנקרא"
-          description="סיפור קצר מהמילים שלך ושאלות הבנה בתעתיק"
-          tag="תרגול הבנה"
+          title="תרגול"
+          description="מבדק, בניית משפטים, סיפור וכתיבה - כל התרגילים במקום אחד"
+          tag="מבדק · משפטים · סיפור · כתיבה"
           emphasis="solid"
         />
         <HomeMenuButton
