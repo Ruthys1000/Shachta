@@ -6,11 +6,11 @@ import { clsx } from "clsx";
 import type { LucideIcon } from "lucide-react";
 import {
   ScanLine,
+  ListPlus,
   Sparkles,
   Blocks,
   BookOpenText,
   PenLine,
-  ListPlus,
   BookOpen,
   Award,
 } from "lucide-react";
@@ -21,7 +21,10 @@ interface NavItem {
   icon: LucideIcon;
 }
 
-const LESSON_ITEM: NavItem = { href: "/lesson", label: "סריקת שיעור", icon: ScanLine };
+const INPUT_ITEMS: NavItem[] = [
+  { href: "/lesson", label: "סריקת שיעור", icon: ScanLine },
+  { href: "/add-words", label: "הוספת מילים", icon: ListPlus },
+];
 
 const PRACTICE_ITEMS: NavItem[] = [
   { href: "/quiz", label: "מבדק", icon: Sparkles },
@@ -30,11 +33,14 @@ const PRACTICE_ITEMS: NavItem[] = [
   { href: "/writing", label: "כתיבה", icon: PenLine },
 ];
 
-const MANAGE_ITEMS: NavItem[] = [
-  { href: "/add-words", label: "הוספת מילים", icon: ListPlus },
+const TRACK_ITEMS: NavItem[] = [
   { href: "/vocabulary", label: "אוצר המילים שלי", icon: BookOpen },
   { href: "/achievements", label: "הישגים", icon: Award },
 ];
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return <div className="mt-3 px-3 text-xs font-semibold text-muted">{children}</div>;
+}
 
 function NavLink({ item, active }: { item: NavItem; active: boolean }) {
   const Icon = item.icon;
@@ -61,15 +67,28 @@ export function Sidebar() {
         שחתה
       </Link>
 
-      <NavLink item={LESSON_ITEM} active={pathname === LESSON_ITEM.href} />
+      <SectionLabel>הוספת תוכן</SectionLabel>
+      {INPUT_ITEMS.map((item) => (
+        <NavLink key={item.href} item={item} active={pathname === item.href} />
+      ))}
 
-      <div className="mt-3 px-3 text-xs font-semibold text-muted">תרגול</div>
+      <Link
+        href="/practice"
+        className={clsx(
+          "mt-3 px-3 text-xs font-semibold transition",
+          pathname === "/practice"
+            ? "text-primary-dark"
+            : "text-muted hover:text-foreground hover:underline"
+        )}
+      >
+        תרגול
+      </Link>
       {PRACTICE_ITEMS.map((item) => (
         <NavLink key={item.href} item={item} active={pathname === item.href} />
       ))}
 
-      <div className="my-3 border-t border-border" />
-      {MANAGE_ITEMS.map((item) => (
+      <SectionLabel>ניהול ומעקב</SectionLabel>
+      {TRACK_ITEMS.map((item) => (
         <NavLink key={item.href} item={item} active={pathname === item.href} />
       ))}
     </nav>

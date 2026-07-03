@@ -45,45 +45,62 @@ export default function Home() {
         <GamificationPanel />
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <HomeMenuButton
-          href="/lesson"
-          icon={ScanLine}
-          title="סריקת שיעור"
-          description="צלמ/י עמודי שיעור וקבל/י לימוד ומבדק מותאמים"
-          tag="סריקה + תרגול"
-          emphasis="solid"
-        />
-        <HomeMenuButton
-          href="/practice"
-          icon={Sparkles}
-          title="תרגול"
-          description="מבדק, בניית משפטים, סיפור וכתיבה - כל התרגילים במקום אחד"
-          tag="מבדק · משפטים · סיפור · כתיבה"
-          emphasis="solid"
-        />
-        <HomeMenuButton
-          href="/add-words"
-          icon={ListPlus}
-          title="הוספת מילים"
-          description="הדבק/י מילים חדשות ושמור/י אותן באוצר המילים"
-          tag="הוספת תוכן"
-        />
-        <HomeMenuButton
-          href="/vocabulary"
-          icon={BookOpen}
-          title="אוצר המילים שלי"
-          description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
-          tag="ניהול ועיון"
-        />
-        <HomeMenuButton
-          href="/achievements"
-          icon={Award}
-          title="הישגים"
-          description="עקבי אחרי הרמה, היעד היומי וההישגים שצברת"
-          tag="התקדמות"
-          emphasis="soft"
-        />
+      <div className="flex flex-col gap-6">
+        <section>
+          <h2 className="mb-2 px-1 text-sm font-semibold text-muted">הוספת תוכן</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <HomeMenuButton
+              href="/lesson"
+              icon={ScanLine}
+              title="סריקת שיעור"
+              description="צלמ/י עמודי שיעור וקבל/י לימוד ומבדק מותאמים"
+              tag="סריקה + תרגול"
+              emphasis="solid"
+            />
+            <HomeMenuButton
+              href="/add-words"
+              icon={ListPlus}
+              title="הוספת מילים"
+              description="הדבק/י מילים חדשות ושמור/י אותן באוצר המילים"
+              tag="הוספת תוכן"
+            />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-2 px-1 text-sm font-semibold text-muted">תרגול</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <HomeMenuButton
+              href="/practice"
+              icon={Sparkles}
+              title="תרגול"
+              description="מבדק, בניית משפטים, סיפור וכתיבה - כל התרגילים במקום אחד"
+              tag="מבדק · משפטים · סיפור · כתיבה"
+              emphasis="solid"
+            />
+          </div>
+        </section>
+
+        <section>
+          <h2 className="mb-2 px-1 text-sm font-semibold text-muted">ניהול ומעקב</h2>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <HomeMenuButton
+              href="/vocabulary"
+              icon={BookOpen}
+              title="אוצר המילים שלי"
+              description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
+              tag="ניהול ועיון"
+            />
+            <HomeMenuButton
+              href="/achievements"
+              icon={Award}
+              title="הישגים"
+              description="עקבי אחרי הרמה, היעד היומי וההישגים שצברת"
+              tag="התקדמות"
+              emphasis="soft"
+            />
+          </div>
+        </section>
       </div>
 
       <button
