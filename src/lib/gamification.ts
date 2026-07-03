@@ -24,6 +24,7 @@ export interface GamificationStats {
   storyQuestionWrong: number;
   practicedToday: number;
   storyQuestionsToday: number;
+  sentenceExercisesToday: number;
 }
 
 export interface LevelProgress {
@@ -48,31 +49,44 @@ function startOfTodayUtc(): Date {
 }
 
 export async function getGamificationStats(): Promise<GamificationStats> {
-  const [byType, historySums, sentenceSums, storyAggregate, practicedToday, storyTodayAgg] =
-    await Promise.all([
-      prisma.vocabulary.groupBy({ by: ["itemType"], _count: true }),
-      prisma.practiceHistory.aggregate({
-        _sum: { correctCount: true, wrongCount: true },
-      }),
-      prisma.sentenceLessonHistory.aggregate({
-        _count: true,
-        _sum: { correctCount: true, wrongCount: true },
-      }),
-      prisma.storyHistory.aggregate({
-        _count: true,
-        _sum: { correctCount: true, wrongCount: true },
-      }),
-      prisma.practiceHistory.count({
-        where: { lastPracticed: { gte: startOfTodayUtc() } },
-      }),
-      prisma.storyHistory.aggregate({
-        _sum: { correctCount: true, wrongCount: true },
-        where: { createdAt: { gte: startOfTodayUtc() } },
-      }),
-    ]);
+  const [
+    byType,
+    historySums,
+    sentenceSums,
+    storyAggregate,
+    practicedToday,
+    storyTodayAgg,
+    sentenceTodayAgg,
+  ] = await Promise.all([
+    prisma.vocabulary.groupBy({ by: ["itemType"], _count: true }),
+    prisma.practiceHistory.aggregate({
+      _sum: { correctCount: true, wrongCount: true },
+    }),
+    prisma.sentenceLessonHistory.aggregate({
+      _count: true,
+      _sum: { correctCount: true, wrongCount: true },
+    }),
+    prisma.storyHistory.aggregate({
+      _count: true,
+      _sum: { correctCount: true, wrongCount: true },
+    }),
+    prisma.practiceHistory.count({
+      where: { lastPracticed: { gte: startOfTodayUtc() } },
+    }),
+    prisma.storyHistory.aggregate({
+      _sum: { correctCount: true, wrongCount: true },
+      where: { createdAt: { gte: startOfTodayUtc() } },
+    }),
+    prisma.sentenceLessonHistory.aggregate({
+      _sum: { correctCount: true, wrongCount: true },
+      where: { createdAt: { gte: startOfTodayUtc() } },
+    }),
+  ]);
 
   const storyQuestionsToday =
     (storyTodayAgg._sum.correctCount ?? 0) + (storyTodayAgg._sum.wrongCount ?? 0);
+  const sentenceExercisesToday =
+    (sentenceTodayAgg._sum.correctCount ?? 0) + (sentenceTodayAgg._sum.wrongCount ?? 0);
 
   const phraseCount = byType.find((g) => g.itemType === "PHRASE")?._count ?? 0;
   const sentenceCount = byType.find((g) => g.itemType === "SENTENCE")?._count ?? 0;
@@ -92,6 +106,7 @@ export async function getGamificationStats(): Promise<GamificationStats> {
     storyQuestionWrong: storyAggregate._sum.wrongCount ?? 0,
     practicedToday,
     storyQuestionsToday,
+    sentenceExercisesToday,
   };
 }
 
@@ -138,8 +153,9 @@ export async function getGamificationSummary(): Promise<GamificationSummary> {
     level: levelForXp(xp),
     levelProgress: levelProgress(xp),
     dailyGoal: {
-      // Quiz words practiced today + story questions answered today.
-      current: stats.practicedToday + stats.storyQuestionsToday,
+      // Quiz/writing words practiced + story questions + sentence-builder
+      // exercises answered today.
+      current: stats.practicedToday + stats.storyQuestionsToday + stats.sentenceExercisesToday,
       target: DAILY_GOAL_TARGET,
     },
     achievements: evaluateAchievements(stats),
