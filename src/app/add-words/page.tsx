@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type { ParsedVocabItem, BulkVocabConflict, BulkVocabItem, DuplicateResolution } from "@/types";
 import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -133,7 +134,7 @@ export default function AddWordsPage() {
 
   return (
     <PageShell wide>
-      <ScreenHeader title="הוספת מילים" />
+      <ScreenHeader title="הוספת מילים" icon={ICON.addWords} />
 
       {phase === "input" && (
         <ParseInputForm

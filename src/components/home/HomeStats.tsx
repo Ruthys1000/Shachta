@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import { TrendingUp, BookOpen, Award } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type { GamificationSummary } from "@/lib/gamification";
 
 function StatTile({
@@ -53,21 +53,21 @@ export function HomeStats({ summary }: { summary: GamificationSummary | null }) 
     <div className="grid grid-cols-3 gap-3">
       <StatTile
         href="/achievements"
-        icon={TrendingUp}
+        icon={ICON.level}
         label="רמה"
         value={`רמה ${summary.level}`}
         sub={`${summary.levelProgress.xpIntoLevel}/${summary.levelProgress.xpForNextLevel} XP`}
       />
       <StatTile
         href="/vocabulary"
-        icon={BookOpen}
+        icon={ICON.vocabulary}
         label="מילים"
         value={`${summary.vocabularyCount}`}
         sub="מילים באוצר"
       />
       <StatTile
         href="/achievements"
-        icon={Award}
+        icon={ICON.achievements}
         label="הישגים"
         value={`${unlocked}/${total}`}
         sub="הישגים נפתחו"

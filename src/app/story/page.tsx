@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpenText } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type { Story, StoryQuestion } from "@/types";
 import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -97,15 +97,15 @@ export default function StoryPage() {
 
   return (
     <PageShell wide>
-      <ScreenHeader title="סיפור והבנת הנקרא" />
+      <ScreenHeader title="סיפור והבנת הנקרא" icon={ICON.story} />
 
       {phase === "idle" && (
         <EmptyState
-          icon={BookOpenText}
+          icon={ICON.story}
           title="מוכן/ה לסיפור?"
           description="ניצור עבורך סיפור קצר מתוך אוצר המילים האישי שלך, ולאחריו שאלות הבנה"
           action={
-            <Button onClick={handleGenerate} icon={BookOpenText}>
+            <Button onClick={handleGenerate} icon={ICON.ai}>
               צור סיפור חדש
             </Button>
           }

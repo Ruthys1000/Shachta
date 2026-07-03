@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { BookOpen } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type { ItemType } from "@prisma/client";
 import type { VocabularyWithHistory } from "@/types";
 import { PageShell } from "@/components/ui/PageShell";
@@ -107,6 +107,7 @@ export default function VocabularyPage() {
     <PageShell wide>
       <ScreenHeader
         title="אוצר המילים שלי"
+        icon={ICON.vocabulary}
         badge={
           wordCountLabel && (
             <span className="inline-flex w-fit items-center rounded-full bg-muted-soft px-2 py-0.5 text-[11px] font-medium text-muted">
@@ -133,7 +134,7 @@ export default function VocabularyPage() {
         </div>
       ) : items.length === 0 ? (
         <EmptyState
-          icon={BookOpen}
+          icon={ICON.vocabulary}
           title={search || type !== "ALL" ? "לא נמצאו תוצאות" : "עדיין אין מילים באוצר"}
           description={search || type !== "ALL" ? "נסה/י חיפוש אחר" : "התחל/י בהוספת מילים חדשות"}
         />

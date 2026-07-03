@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PenLine } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type { WritingPrompt } from "@/types";
 import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -93,15 +93,15 @@ export default function WritingPage() {
 
   return (
     <PageShell wide>
-      <ScreenHeader title="תרגול כתיבה" />
+      <ScreenHeader title="תרגול כתיבה" icon={ICON.writing} />
 
       {phase === "idle" && (
         <EmptyState
-          icon={PenLine}
+          icon={ICON.writing}
           title="מוכן/ה לכתוב?"
           description="נציג לך מילה, משפט או שאלה בעברית, ואת/ה תקליד/י את התעתיק הערבי"
           action={
-            <Button onClick={handleStart} icon={PenLine}>
+            <Button onClick={handleStart} icon={ICON.writing}>
               התחל/י כתיבה
             </Button>
           }

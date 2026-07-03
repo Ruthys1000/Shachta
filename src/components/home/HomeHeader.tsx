@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Sparkles } from "lucide-react";
+import { ICON } from "@/lib/activities";
 
 const NAME = "איילת";
 
@@ -61,7 +61,7 @@ export function HomeHeader({ level }: { level: number | null }) {
           </h1>
           {level != null && (
             <span className="inline-flex items-center gap-1 rounded-full bg-secondary-soft px-2.5 py-0.5 text-xs font-semibold text-secondary">
-              <Sparkles className="size-3.5" />
+              <ICON.level className="size-3.5" />
               רמה {level}
             </span>
           )}

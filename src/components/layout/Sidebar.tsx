@@ -3,46 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { clsx } from "clsx";
-import type { LucideIcon } from "lucide-react";
-import {
-  ScanLine,
-  ListPlus,
-  Sparkles,
-  Blocks,
-  BookOpenText,
-  PenLine,
-  BookOpen,
-  Award,
-} from "lucide-react";
+import { activitiesInGroup, PRACTICE_HUB, type Activity } from "@/lib/activities";
 
-interface NavItem {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-}
-
-const INPUT_ITEMS: NavItem[] = [
-  { href: "/lesson", label: "סריקת שיעור", icon: ScanLine },
-  { href: "/add-words", label: "הוספת מילים", icon: ListPlus },
-];
-
-const PRACTICE_ITEMS: NavItem[] = [
-  { href: "/quiz", label: "מבדק", icon: Sparkles },
-  { href: "/sentence-builder", label: "בניית משפטים", icon: Blocks },
-  { href: "/story", label: "סיפור והבנת הנקרא", icon: BookOpenText },
-  { href: "/writing", label: "כתיבה", icon: PenLine },
-];
-
-const TRACK_ITEMS: NavItem[] = [
-  { href: "/vocabulary", label: "אוצר המילים שלי", icon: BookOpen },
-  { href: "/achievements", label: "הישגים", icon: Award },
-];
+const INPUT_ITEMS = activitiesInGroup("input");
+const PRACTICE_ITEMS = activitiesInGroup("practice");
+const TRACK_ITEMS = activitiesInGroup("track");
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return <div className="mt-3 px-3 text-xs font-semibold text-muted">{children}</div>;
 }
 
-function NavLink({ item, active }: { item: NavItem; active: boolean }) {
+function NavLink({ item, active }: { item: Activity; active: boolean }) {
   const Icon = item.icon;
   return (
     <Link
@@ -73,15 +44,15 @@ export function Sidebar() {
       ))}
 
       <Link
-        href="/practice"
+        href={PRACTICE_HUB.href}
         className={clsx(
           "mt-3 px-3 text-xs font-semibold transition",
-          pathname === "/practice"
+          pathname === PRACTICE_HUB.href
             ? "text-primary-dark"
             : "text-muted hover:text-foreground hover:underline"
         )}
       >
-        תרגול
+        {PRACTICE_HUB.label}
       </Link>
       {PRACTICE_ITEMS.map((item) => (
         <NavLink key={item.href} item={item} active={pathname === item.href} />

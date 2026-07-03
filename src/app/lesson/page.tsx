@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type {
   ParsedVocabItem,
   BulkVocabConflict,
@@ -323,7 +324,7 @@ export default function LessonPage() {
 
   return (
     <PageShell wide>
-      <ScreenHeader title={lessonTitle ?? "שיעור סרוק"} />
+      <ScreenHeader title={lessonTitle ?? "שיעור סרוק"} icon={ICON.lesson} />
 
       {phase === "upload" && <ImageUploadForm onSubmit={handleUpload} loading={false} error={parseError} />}
 

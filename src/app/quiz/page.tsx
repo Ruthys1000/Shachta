@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Sparkles } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type { Quiz, QuizQuestion } from "@/types";
 import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -113,11 +114,11 @@ export default function QuizPage() {
 
   return (
     <PageShell wide>
-      <ScreenHeader title="מבדק" />
+      <ScreenHeader title="מבדק" icon={ICON.quiz} />
 
       {phase === "idle" && (
         <EmptyState
-          icon={Sparkles}
+          icon={ICON.quiz}
           title="מוכן/ה לתרגול?"
           description="ניצור עבורך מבדק חדש מתוך אוצר המילים האישי שלך"
           action={

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { clsx } from "clsx";
-import { Sparkles, ListPlus, PartyPopper, ChevronLeft } from "lucide-react";
+import { PartyPopper, ChevronLeft } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type { GamificationSummary } from "@/lib/gamification";
 
 function ProgressTrack({ percent, reached }: { percent: number; reached: boolean }) {
@@ -40,13 +41,14 @@ export function DailyFocusCard({ summary }: { summary: GamificationSummary | nul
             href="/add-words"
             className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark active:scale-[0.98]"
           >
-            <ListPlus className="size-4" />
+            <ICON.addWords className="size-4" />
             הוספת מילים
           </Link>
           <Link
             href="/lesson"
             className="inline-flex items-center gap-2 rounded-xl border border-primary bg-transparent px-4 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary-soft active:scale-[0.98]"
           >
+            <ICON.lesson className="size-4" />
             סריקת שיעור
           </Link>
         </div>
@@ -76,7 +78,7 @@ export function DailyFocusCard({ summary }: { summary: GamificationSummary | nul
               </>
             ) : (
               <>
-                <Sparkles className="size-5 text-primary" />
+                <ICON.dailyGoal className="size-5 text-primary" />
                 התרגול היומי שלך
               </>
             )}
@@ -101,7 +103,7 @@ export function DailyFocusCard({ summary }: { summary: GamificationSummary | nul
           href="/quiz"
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-dark active:scale-[0.98]"
         >
-          <Sparkles className="size-4" />
+          <ICON.quiz className="size-4" />
           {reached ? "עוד מבדק" : "יאללה, לתרגול"}
         </Link>
         <Link
