@@ -45,7 +45,8 @@ export const XP_PER_SENTENCE_LESSON = 15;
 export const XP_PER_STORY_COMPLETED = 15;
 // Cumulative XP required for level n = LEVEL_XP_BASE * (n-1) * n.
 export const LEVEL_XP_BASE = 40;
-// Distinct vocabulary items practiced via quiz (PracticeHistory.lastPracticed) per UTC day.
-export const DAILY_GOAL_TARGET = 10;
+// Daily practice goal per UTC day: distinct quiz words (PracticeHistory.lastPracticed)
+// plus story questions answered (StoryHistory created today).
+export const DAILY_GOAL_TARGET = 15;
 // How many recently-taught rule titles to show the AI so it avoids repeating them.
 export const SENTENCE_LESSON_RECENT_TITLES_LIMIT = 15;

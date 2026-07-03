@@ -84,7 +84,7 @@ export function DailyFocusCard({ summary }: { summary: GamificationSummary | nul
           <p className="mt-1 text-sm text-muted">
             {reached
               ? "השלמת את היעד היומי. רוצה עוד סיבוב?"
-              : `עוד ${remaining} מילים ותשלימי את היעד של היום`}
+              : `עוד ${remaining} תרגולים ותשלימי את היעד של היום`}
           </p>
         </div>
         <span className="shrink-0 text-sm font-semibold text-muted">
