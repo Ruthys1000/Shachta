@@ -1,9 +1,23 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { clsx } from "clsx";
 import { CheckCircle2, Info, X, XCircle } from "lucide-react";
+
+const noopSubscribe = () => () => {};
+
+// Portals must not render during SSR/hydration (there's no document yet), but
+// must appear right after mount on the client. useSyncExternalStore is the
+// React-recommended way to read this "are we on the client" flag without the
+// setState-in-effect re-render that a useEffect-based approach would need.
+function useIsClient(): boolean {
+  return useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false
+  );
+}
 
 type ToastTone = "success" | "danger" | "muted";
 
@@ -77,9 +91,7 @@ function ToastCard({ toast, onDismiss }: { toast: ToastItem; onDismiss: (id: str
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
-  const [container] = useState<HTMLElement | null>(() =>
-    typeof document !== "undefined" ? document.body : null
-  );
+  const isClient = useIsClient();
 
   const dismiss = useCallback((id: string) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -103,14 +115,14 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={value}>
       {children}
-      {container &&
+      {isClient &&
         createPortal(
           <div className="pointer-events-none fixed inset-x-0 top-4 z-[60] flex flex-col items-center gap-2 px-4">
             {toasts.map((toast) => (
               <ToastCard key={toast.id} toast={toast} onDismiss={dismiss} />
             ))}
           </div>,
-          container
+          document.body
         )}
     </ToastContext.Provider>
   );
