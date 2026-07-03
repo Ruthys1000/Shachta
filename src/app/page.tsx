@@ -1,21 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { ListPlus, BookOpen, Sparkles, ScanLine, LogOut, Award } from "lucide-react";
+import { ListPlus, BookOpen, Sparkles, ScanLine, LogOut } from "lucide-react";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
+import { HomeHeader } from "@/components/home/HomeHeader";
+import { DailyFocusCard } from "@/components/home/DailyFocusCard";
+import { HomeStats } from "@/components/home/HomeStats";
 import { AiBudgetBadge } from "@/components/home/AiBudgetBadge";
-import { GreetingBanner } from "@/components/home/GreetingBanner";
-import { GamificationPanel } from "@/components/home/GamificationPanel";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { Card } from "@/components/ui/Card";
 import { PageShell } from "@/components/ui/PageShell";
+import type { GamificationSummary } from "@/lib/gamification";
 
 export default function Home() {
   const router = useRouter();
+  const [summary, setSummary] = useState<GamificationSummary | null>(null);
   const [confirmingLogout, setConfirmingLogout] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/gamification/summary")
+      .then((res) => (res.ok ? res.json() : null))
+      .then(setSummary)
+      .catch(() => setSummary(null));
+  }, []);
 
   async function handleLogout() {
     setLoggingOut(true);
@@ -26,26 +34,13 @@ export default function Home() {
 
   return (
     <PageShell wide>
-      <div className="mb-8 flex flex-col items-center gap-3 pt-4 text-center sm:pt-10">
-        <Card className="p-3">
-          <Image
-            src="/shachta-avatar.png"
-            alt="שחתה"
-            width={128}
-            height={128}
-            priority
-            unoptimized
-            className="size-28 rounded-2xl object-cover sm:size-32"
-          />
-        </Card>
-        <h1 className="text-2xl font-bold sm:text-3xl">איילת מתרגלת ערבית</h1>
-        <p className="text-sm text-muted">תרגול אישי של ערבית מדוברת בתעתיק עברי</p>
-        <GreetingBanner />
-        <AiBudgetBadge />
-        <GamificationPanel />
-      </div>
-
       <div className="flex flex-col gap-6">
+        <HomeHeader level={summary?.level ?? null} />
+
+        <DailyFocusCard summary={summary} />
+
+        <HomeStats summary={summary} />
+
         <section>
           <h2 className="mb-2 px-1 text-sm font-semibold text-muted">הוספת תוכן</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -68,7 +63,7 @@ export default function Home() {
         </section>
 
         <section>
-          <h2 className="mb-2 px-1 text-sm font-semibold text-muted">תרגול</h2>
+          <h2 className="mb-2 px-1 text-sm font-semibold text-muted">תרגול ומעקב</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <HomeMenuButton
               href="/practice"
@@ -78,12 +73,6 @@ export default function Home() {
               tag="מבדק · משפטים · סיפור · כתיבה"
               emphasis="solid"
             />
-          </div>
-        </section>
-
-        <section>
-          <h2 className="mb-2 px-1 text-sm font-semibold text-muted">ניהול ומעקב</h2>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <HomeMenuButton
               href="/vocabulary"
               icon={BookOpen}
@@ -91,25 +80,20 @@ export default function Home() {
               description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
               tag="ניהול ועיון"
             />
-            <HomeMenuButton
-              href="/achievements"
-              icon={Award}
-              title="הישגים"
-              description="עקבי אחרי הרמה, היעד היומי וההישגים שצברת"
-              tag="התקדמות"
-              emphasis="soft"
-            />
           </div>
         </section>
       </div>
 
-      <button
-        onClick={() => setConfirmingLogout(true)}
-        className="mx-auto mt-10 flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted transition hover:bg-muted-soft"
-      >
-        <LogOut className="size-4" />
-        התנתקות
-      </button>
+      <div className="mt-10 flex flex-col items-center gap-3">
+        <AiBudgetBadge />
+        <button
+          onClick={() => setConfirmingLogout(true)}
+          className="flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted transition hover:bg-muted-soft"
+        >
+          <LogOut className="size-4" />
+          התנתקות
+        </button>
+      </div>
 
       {confirmingLogout && (
         <ConfirmDialog
@@ -123,7 +107,7 @@ export default function Home() {
         />
       )}
 
-      <footer className="mt-10 border-t border-border pt-6 text-center text-xs text-muted">
+      <footer className="mt-8 border-t border-border pt-6 text-center text-xs text-muted">
         אפליקציית &quot;שחתה&quot; אוספת מילים מהשיעורים שאת מעלה, ובונה סביבן תרגילים — מבדקים, משפטי בנייה וסיפורים, הכול בתעתיק עברי.
       </footer>
     </PageShell>
