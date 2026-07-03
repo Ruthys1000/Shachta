@@ -113,7 +113,7 @@ export default function QuizPage() {
 
   return (
     <PageShell wide>
-      <ScreenHeader title="מבדק תרגול" />
+      <ScreenHeader title="מבדק" />
 
       {phase === "idle" && (
         <EmptyState

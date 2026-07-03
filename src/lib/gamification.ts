@@ -38,6 +38,7 @@ export interface GamificationSummary {
   levelProgress: LevelProgress;
   dailyGoal: { current: number; target: number };
   achievements: AchievementResult[];
+  vocabularyCount: number;
 }
 
 function startOfTodayUtc(): Date {
@@ -128,5 +129,6 @@ export async function getGamificationSummary(): Promise<GamificationSummary> {
     levelProgress: levelProgress(xp),
     dailyGoal: { current: stats.practicedToday, target: DAILY_GOAL_TARGET },
     achievements: evaluateAchievements(stats),
+    vocabularyCount: stats.vocabularyCount,
   };
 }
