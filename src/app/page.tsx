@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ListPlus, BookOpen, Sparkles, ScanLine, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
+import { ACTIVITY, emphasisFor } from "@/lib/activities";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { HomeHeader } from "@/components/home/HomeHeader";
 import { DailyFocusCard } from "@/components/home/DailyFocusCard";
@@ -45,19 +46,20 @@ export default function Home() {
           <h2 className="mb-2 px-1 text-sm font-semibold text-muted">הוספת תוכן</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <HomeMenuButton
-              href="/lesson"
-              icon={ScanLine}
-              title="סריקת שיעור"
+              href={ACTIVITY.lesson.href}
+              icon={ACTIVITY.lesson.icon}
+              title={ACTIVITY.lesson.label}
               description="צלמ/י עמודי שיעור וקבל/י לימוד ומבדק מותאמים"
               tag="סריקה + תרגול"
-              emphasis="solid"
+              emphasis={emphasisFor(ACTIVITY.lesson)}
             />
             <HomeMenuButton
-              href="/add-words"
-              icon={ListPlus}
-              title="הוספת מילים"
+              href={ACTIVITY.addWords.href}
+              icon={ACTIVITY.addWords.icon}
+              title={ACTIVITY.addWords.label}
               description="הדבק/י מילים חדשות ושמור/י אותן באוצר המילים"
               tag="הוספת תוכן"
+              emphasis={emphasisFor(ACTIVITY.addWords)}
             />
           </div>
         </section>
@@ -66,19 +68,20 @@ export default function Home() {
           <h2 className="mb-2 px-1 text-sm font-semibold text-muted">תרגול ומעקב</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <HomeMenuButton
-              href="/practice"
-              icon={Sparkles}
-              title="תרגול"
+              href={ACTIVITY.practice.href}
+              icon={ACTIVITY.practice.icon}
+              title={ACTIVITY.practice.label}
               description="מבדק, בניית משפטים, סיפור וכתיבה - כל התרגילים במקום אחד"
               tag="מבדק · משפטים · סיפור · כתיבה"
-              emphasis="solid"
+              emphasis={emphasisFor(ACTIVITY.practice)}
             />
             <HomeMenuButton
-              href="/vocabulary"
-              icon={BookOpen}
-              title="אוצר המילים שלי"
+              href={ACTIVITY.vocabulary.href}
+              icon={ACTIVITY.vocabulary.icon}
+              title={ACTIVITY.vocabulary.label}
               description="צפייה, חיפוש, סינון ומיון בכל הפריטים שצברת"
               tag="ניהול ועיון"
+              emphasis={emphasisFor(ACTIVITY.vocabulary)}
             />
           </div>
         </section>

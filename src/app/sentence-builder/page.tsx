@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Blocks } from "lucide-react";
+import { ICON } from "@/lib/activities";
 import type { SentenceLesson, SentenceBuildExercise as SentenceBuildExerciseType } from "@/types";
 import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -106,15 +106,15 @@ export default function SentenceBuilderPage() {
 
   return (
     <PageShell wide>
-      <ScreenHeader title="לימוד בניית משפטים" />
+      <ScreenHeader title="לימוד בניית משפטים" icon={ICON.sentenceBuilder} />
 
       {phase === "idle" && (
         <EmptyState
-          icon={Blocks}
+          icon={ICON.sentenceBuilder}
           title="מוכן/ה ללמוד לבנות משפט?"
           description="ניצור עבורך שיעור קצר על כלל בניית משפט אחד, מתוך אוצר המילים האישי שלך, עם תרגול הרכבה"
           action={
-            <Button onClick={handleGenerate} icon={Blocks}>
+            <Button onClick={handleGenerate} icon={ICON.ai}>
               התחל/י ללמוד
             </Button>
           }

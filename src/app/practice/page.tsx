@@ -1,4 +1,4 @@
-import { Sparkles, Blocks, BookOpenText, PenLine } from "lucide-react";
+import { ACTIVITY, emphasisFor } from "@/lib/activities";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { PageShell } from "@/components/ui/PageShell";
 import { ScreenHeader } from "@/components/ui/ScreenHeader";
@@ -6,36 +6,39 @@ import { ScreenHeader } from "@/components/ui/ScreenHeader";
 export default function PracticePage() {
   return (
     <PageShell wide>
-      <ScreenHeader title="תרגול" />
+      <ScreenHeader title="תרגול" icon={ACTIVITY.practice.icon} />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <HomeMenuButton
-          href="/quiz"
-          icon={Sparkles}
+          href={ACTIVITY.quiz.href}
+          icon={ACTIVITY.quiz.icon}
           title="מבדק"
           description="תרגול וחזרה על המילים שכבר שמורות באוצר"
           tag="תרגול"
-          emphasis="solid"
+          emphasis={emphasisFor(ACTIVITY.quiz)}
         />
         <HomeMenuButton
-          href="/sentence-builder"
-          icon={Blocks}
+          href={ACTIVITY.sentenceBuilder.href}
+          icon={ACTIVITY.sentenceBuilder.icon}
           title="בניית משפטים"
           description="למד/י איך מרכיבים משפט נכון מהמילים שלך, צעד-צעד"
           tag="לימוד"
+          emphasis={emphasisFor(ACTIVITY.sentenceBuilder)}
         />
         <HomeMenuButton
-          href="/story"
-          icon={BookOpenText}
+          href={ACTIVITY.story.href}
+          icon={ACTIVITY.story.icon}
           title="סיפור והבנת הנקרא"
           description="סיפור קצר מהמילים שלך ושאלות הבנה בתעתיק"
           tag="תרגול הבנה"
+          emphasis={emphasisFor(ACTIVITY.story)}
         />
         <HomeMenuButton
-          href="/writing"
-          icon={PenLine}
+          href={ACTIVITY.writing.href}
+          icon={ACTIVITY.writing.icon}
           title="כתיבה"
           description="מילה, משפט או שאלה בעברית - ואת/ה כותב/ת את התעתיק הערבי"
           tag="תרגול הפקה"
+          emphasis={emphasisFor(ACTIVITY.writing)}
         />
       </div>
     </PageShell>
