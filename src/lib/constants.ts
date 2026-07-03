@@ -18,6 +18,8 @@ export const QUIZ_MULTIPLE_CHOICE_MIN_VOCAB = 4;
 // asking Claude to build a quiz, so questions rotate and skew toward weak words.
 export const QUIZ_CANDIDATE_POOL_SIZE = 15;
 
+export const WRITING_SESSION_SIZE = 10;
+
 export const STORY_MIN_VOCAB = 5;
 export const STORY_MIN_SEGMENTS = 4;
 export const STORY_MAX_SEGMENTS = 7;

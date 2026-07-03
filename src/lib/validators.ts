@@ -42,6 +42,11 @@ export const quizGenerateRequestSchema = z.object({
   vocabularyIds: z.array(z.string().uuid()).min(1).optional(),
 });
 
+export const writingSessionRequestSchema = z.object({
+  itemCount: z.number().int().min(1).max(20).optional(),
+  vocabularyIds: z.array(z.string().uuid()).min(1).optional(),
+});
+
 export const lessonImageSchema = z.object({
   data: z.string().min(1),
   mediaType: z.enum(["image/jpeg", "image/png", "image/gif", "image/webp"]),

@@ -59,6 +59,17 @@ export interface PracticeResult {
   correct: boolean;
 }
 
+export interface WritingPrompt {
+  vocabularyId: string;
+  hebrewMeaning: string;
+  itemType: ItemType;
+  correctAnswer: string;
+}
+
+export interface WritingSession {
+  items: WritingPrompt[];
+}
+
 export interface DialogueLine {
   speaker?: string;
   arabicTranslit: string;
