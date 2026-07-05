@@ -60,6 +60,7 @@ model StoryHistory {
 model AiUsageLog {
   id           String   @id @default(uuid())
   route        String
+  role         String   @default("owner")
   inputTokens  Int      @map("input_tokens")
   outputTokens Int      @map("output_tokens")
   costUsd      Float    @map("cost_usd")

@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { CLAUDE_MODEL } from "@/lib/constants";
 import { getBudgetStatus, recordUsage } from "@/lib/aiUsage";
+import { getSessionRole } from "@/lib/session";
 
 const CLAUDE_CALL_TIMEOUT_MS = 45_000;
 
@@ -37,7 +38,11 @@ async function requestToolUse(
   },
   tool: ToolDefinition
 ): Promise<unknown> {
-  const budget = await getBudgetStatus();
+  // Role comes from the request cookie, so demo generation is capped and logged
+  // against the demo's own daily budget (defaults to owner outside a session).
+  const role = (await getSessionRole()) ?? "owner";
+
+  const budget = await getBudgetStatus(role);
   if (budget.exceeded) {
     throw new BudgetExceededError(BUDGET_EXCEEDED_MESSAGE);
   }
@@ -57,6 +62,7 @@ async function requestToolUse(
 
   await recordUsage({
     route: toolName,
+    role,
     inputTokens: response.usage.input_tokens,
     outputTokens: response.usage.output_tokens,
   });

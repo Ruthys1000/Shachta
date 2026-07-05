@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isDemo } from "@/lib/session";
 import { storyCompleteRequestSchema } from "@/lib/validators";
 
 export async function POST(request: Request) {
@@ -7,6 +8,11 @@ export async function POST(request: Request) {
   const parsed = storyCompleteRequestSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "קלט לא תקין" }, { status: 400 });
+  }
+
+  // Read-only demo: accept the request but persist nothing.
+  if (await isDemo()) {
+    return NextResponse.json({ ok: true });
   }
 
   await prisma.storyHistory.create({

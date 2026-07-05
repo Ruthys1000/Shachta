@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DEMO_READ_ONLY_MESSAGE, isDemo } from "@/lib/session";
 import { createVocabularySchema, itemTypeSchema } from "@/lib/validators";
 
 const SORT_ORDER_BY = {
@@ -49,6 +50,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (await isDemo()) {
+    return NextResponse.json({ error: DEMO_READ_ONLY_MESSAGE }, { status: 403 });
+  }
+
   const body = await request.json().catch(() => null);
   const parsed = createVocabularySchema.safeParse(body);
   if (!parsed.success) {
