@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DEMO_READ_ONLY_MESSAGE, isDemo } from "@/lib/session";
 import { updateVocabularySchema } from "@/lib/validators";
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (await isDemo()) {
+    return NextResponse.json({ error: DEMO_READ_ONLY_MESSAGE }, { status: 403 });
+  }
+
   const { id } = await params;
   const body = await request.json().catch(() => null);
   const parsed = updateVocabularySchema.safeParse(body);
@@ -37,6 +42,10 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (await isDemo()) {
+    return NextResponse.json({ error: DEMO_READ_ONLY_MESSAGE }, { status: 403 });
+  }
+
   const { id } = await params;
   try {
     await prisma.vocabulary.delete({ where: { id } });

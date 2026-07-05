@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { DEMO_READ_ONLY_MESSAGE, isDemo } from "@/lib/session";
 import { bulkVocabRequestSchema } from "@/lib/validators";
 import type { Vocabulary } from "@prisma/client";
 
@@ -12,6 +13,10 @@ interface BulkConflict {
 }
 
 export async function POST(request: Request) {
+  if (await isDemo()) {
+    return NextResponse.json({ error: DEMO_READ_ONLY_MESSAGE }, { status: 403 });
+  }
+
   const body = await request.json().catch(() => null);
   const parsed = bulkVocabRequestSchema.safeParse(body);
   if (!parsed.success) {

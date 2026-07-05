@@ -1,12 +1,22 @@
 export const SESSION_COOKIE_NAME = "session";
 export const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
+// Read-only demo login: a fixed code that grants a short-lived, view-only session.
+// The session shows the real account but every write is blocked (see src/lib/session.ts).
+export const DEMO_LOGIN_CODE = "orly-demo";
+export const DEMO_SESSION_MAX_AGE_SECONDS = 60 * 60 * 48; // 48 hours
+
 export const CLAUDE_MODEL = "claude-sonnet-4-6";
 
 // Daily spending cap for Anthropic API usage. Override via env if needed.
 export const AI_DAILY_BUDGET_USD = process.env.AI_DAILY_BUDGET_USD
   ? Number(process.env.AI_DAILY_BUDGET_USD)
   : 5;
+// Stricter daily cap applied to the read-only demo session, tracked separately from
+// the owner's spend so demo generation can't burn the real budget.
+export const AI_DEMO_DAILY_BUDGET_USD = process.env.AI_DEMO_DAILY_BUDGET_USD
+  ? Number(process.env.AI_DEMO_DAILY_BUDGET_USD)
+  : 1;
 // Claude Sonnet pricing per million tokens (verify against current Anthropic pricing).
 export const CLAUDE_INPUT_PRICE_PER_MTOK_USD = 3;
 export const CLAUDE_OUTPUT_PRICE_PER_MTOK_USD = 15;
