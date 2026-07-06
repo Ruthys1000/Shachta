@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { callClaudeForJSON, ClaudeToolCallError, BudgetExceededError } from "@/lib/anthropic";
+import {
+  callClaudeForJSON,
+  withToolRetry,
+  ClaudeToolCallError,
+  BudgetExceededError,
+} from "@/lib/anthropic";
+import { withDbTimeout, DbTimeoutError } from "@/lib/dbTimeout";
 import { SUBMIT_QUIZ_TOOL, buildQuizSystemPrompt, buildQuizUserMessage } from "@/lib/ai/quizPrompt";
 import { quizGenerateRequestSchema, aiQuizResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
@@ -39,10 +45,24 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  const candidates = await prisma.vocabulary.findMany({
-    where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
-    include: { practiceHistory: true },
-  });
+  let candidates;
+  try {
+    candidates = await withDbTimeout(
+      prisma.vocabulary.findMany({
+        where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
+        include: { practiceHistory: true },
+      }),
+      "vocabulary.findMany"
+    );
+  } catch (err) {
+    if (err instanceof DbTimeoutError) {
+      return NextResponse.json(
+        { error: "בעיה זמנית בגישה למאגר הנתונים, נסה/י שוב" },
+        { status: 503 }
+      );
+    }
+    throw err;
+  }
 
   if (candidates.length === 0) {
     return NextResponse.json({ error: "אין עדיין מילים במאגר" }, { status: 400 });
@@ -59,6 +79,10 @@ export async function POST(request: Request) {
   const system = buildQuizSystemPrompt(allowMultipleChoice);
   const userMessage = buildQuizUserMessage(vocab, questionCount);
 
+  function isGoodEnough(a: { questions: QuizQuestion[] } | null): boolean {
+    return !!a && a.questions.length >= QUIZ_MIN_QUESTIONS;
+  }
+
   async function attemptGenerate(): Promise<{ title: string; questions: QuizQuestion[] } | null> {
     let result: unknown;
     try {
@@ -73,30 +97,30 @@ export async function POST(request: Request) {
     }
     const validated = aiQuizResponseSchema.safeParse(result);
     if (!validated.success) return null;
-    return {
+    const built = {
       title: validated.data.title,
       questions: validateQuestions(validated.data.questions as QuizQuestion[], validVocabIds),
     };
+    return isGoodEnough(built) ? built : null;
   }
 
   let attempt: { title: string; questions: QuizQuestion[] } | null;
   try {
-    attempt = await attemptGenerate();
-
-    if (!attempt || attempt.questions.length < QUIZ_MIN_QUESTIONS) {
-      const retry = await attemptGenerate();
-      if (retry && retry.questions.length >= (attempt?.questions.length ?? 0)) {
-        attempt = retry;
-      }
-    }
+    attempt = await withToolRetry(attemptGenerate);
   } catch (err) {
     if (err instanceof BudgetExceededError) {
       return NextResponse.json({ error: err.message }, { status: 429 });
     }
+    if (err instanceof DbTimeoutError) {
+      return NextResponse.json(
+        { error: "בעיה זמנית בגישה למאגר הנתונים, נסה/י שוב" },
+        { status: 503 }
+      );
+    }
     throw err;
   }
 
-  if (!attempt || attempt.questions.length < QUIZ_MIN_QUESTIONS) {
+  if (!isGoodEnough(attempt) || !attempt) {
     return NextResponse.json(
       { error: "לא הצלחנו להכין מבדק תקין, נסה/י שוב" },
       { status: 502 }

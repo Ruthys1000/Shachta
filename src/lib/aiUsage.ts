@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { SessionRole } from "@/lib/auth";
+import { withDbTimeout } from "@/lib/dbTimeout";
 import {
   AI_DAILY_BUDGET_USD,
   AI_DEMO_DAILY_BUDGET_USD,
@@ -26,10 +27,13 @@ function budgetForRole(role: SessionRole): number {
 // Spend is tracked per-role (see AiUsageLog.role) so the demo's stricter cap is
 // enforced independently of the owner's daily budget.
 export async function getBudgetStatus(role: SessionRole = "owner"): Promise<BudgetStatus> {
-  const result = await prisma.aiUsageLog.aggregate({
-    where: { createdAt: { gte: startOfTodayUtc() }, role },
-    _sum: { costUsd: true },
-  });
+  const result = await withDbTimeout(
+    prisma.aiUsageLog.aggregate({
+      where: { createdAt: { gte: startOfTodayUtc() }, role },
+      _sum: { costUsd: true },
+    }),
+    "aiUsageLog.aggregate"
+  );
 
   const spentUsd = result._sum.costUsd ?? 0;
   const budgetUsd = budgetForRole(role);
@@ -56,7 +60,10 @@ export async function recordUsage({
     (inputTokens / 1_000_000) * CLAUDE_INPUT_PRICE_PER_MTOK_USD +
     (outputTokens / 1_000_000) * CLAUDE_OUTPUT_PRICE_PER_MTOK_USD;
 
-  await prisma.aiUsageLog.create({
-    data: { route, role, inputTokens, outputTokens, costUsd },
-  });
+  await withDbTimeout(
+    prisma.aiUsageLog.create({
+      data: { route, role, inputTokens, outputTokens, costUsd },
+    }),
+    "aiUsageLog.create"
+  );
 }

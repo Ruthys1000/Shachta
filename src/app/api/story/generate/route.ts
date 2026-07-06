@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { callClaudeForJSON, ClaudeToolCallError, BudgetExceededError } from "@/lib/anthropic";
+import {
+  callClaudeForJSON,
+  withToolRetry,
+  ClaudeToolCallError,
+  BudgetExceededError,
+} from "@/lib/anthropic";
+import { withDbTimeout, DbTimeoutError } from "@/lib/dbTimeout";
 import { SUBMIT_STORY_TOOL, buildStorySystemPrompt, buildStoryUserMessage } from "@/lib/ai/storyPrompt";
 import { storyGenerateRequestSchema, aiStoryResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
@@ -32,10 +38,24 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  const vocab = await prisma.vocabulary.findMany({
-    where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
-    select: { arabicTranslit: true, hebrewMeaning: true, itemType: true },
-  });
+  let vocab;
+  try {
+    vocab = await withDbTimeout(
+      prisma.vocabulary.findMany({
+        where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
+        select: { arabicTranslit: true, hebrewMeaning: true, itemType: true },
+      }),
+      "vocabulary.findMany"
+    );
+  } catch (err) {
+    if (err instanceof DbTimeoutError) {
+      return NextResponse.json(
+        { error: "בעיה זמנית בגישה למאגר הנתונים, נסה/י שוב" },
+        { status: 503 }
+      );
+    }
+    throw err;
+  }
 
   if (vocab.length < STORY_MIN_VOCAB) {
     return NextResponse.json(
@@ -65,11 +85,12 @@ export async function POST(request: Request) {
     }
     const validated = aiStoryResponseSchema.safeParse(result);
     if (!validated.success) return null;
-    return {
+    const built = {
       title: validated.data.title,
       segments: validateSegments(validated.data.segments as StorySegment[]),
       questions: validateQuestions(validated.data.questions as StoryQuestion[]),
     };
+    return isGoodEnough(built) ? built : null;
   }
 
   function isGoodEnough(
@@ -80,17 +101,16 @@ export async function POST(request: Request) {
 
   let attempt: { title: string; segments: StorySegment[]; questions: StoryQuestion[] } | null;
   try {
-    attempt = await attemptGenerate();
-
-    if (!isGoodEnough(attempt)) {
-      const retry = await attemptGenerate();
-      if (isGoodEnough(retry)) {
-        attempt = retry;
-      }
-    }
+    attempt = await withToolRetry(attemptGenerate);
   } catch (err) {
     if (err instanceof BudgetExceededError) {
       return NextResponse.json({ error: err.message }, { status: 429 });
+    }
+    if (err instanceof DbTimeoutError) {
+      return NextResponse.json(
+        { error: "בעיה זמנית בגישה למאגר הנתונים, נסה/י שוב" },
+        { status: 503 }
+      );
     }
     throw err;
   }

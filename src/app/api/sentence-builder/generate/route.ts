@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { callClaudeForJSON, ClaudeToolCallError, BudgetExceededError } from "@/lib/anthropic";
+import {
+  callClaudeForJSON,
+  withToolRetry,
+  ClaudeToolCallError,
+  BudgetExceededError,
+} from "@/lib/anthropic";
+import { withDbTimeout, DbTimeoutError } from "@/lib/dbTimeout";
 import {
   SUBMIT_SENTENCE_LESSON_TOOL,
   buildSentenceLessonSystemPrompt,
@@ -47,26 +53,43 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  const vocab = await prisma.vocabulary.findMany({
-    where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
-    select: { arabicTranslit: true, hebrewMeaning: true, itemType: true },
-  });
-
-  if (vocab.length < SENTENCE_LESSON_MIN_VOCAB) {
-    return NextResponse.json(
-      { error: "צריך לפחות 6 מילים באוצר כדי ללמוד בניית משפט" },
-      { status: 400 }
+  let vocab, lessonsCompleted, recentHistory;
+  try {
+    vocab = await withDbTimeout(
+      prisma.vocabulary.findMany({
+        where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
+        select: { arabicTranslit: true, hebrewMeaning: true, itemType: true },
+      }),
+      "vocabulary.findMany"
     );
-  }
 
-  const [lessonsCompleted, recentHistory] = await Promise.all([
-    prisma.sentenceLessonHistory.count(),
-    prisma.sentenceLessonHistory.findMany({
-      orderBy: { createdAt: "desc" },
-      take: SENTENCE_LESSON_RECENT_TITLES_LIMIT,
-      select: { title: true },
-    }),
-  ]);
+    if (vocab.length < SENTENCE_LESSON_MIN_VOCAB) {
+      return NextResponse.json(
+        { error: "צריך לפחות 6 מילים באוצר כדי ללמוד בניית משפט" },
+        { status: 400 }
+      );
+    }
+
+    [lessonsCompleted, recentHistory] = await withDbTimeout(
+      Promise.all([
+        prisma.sentenceLessonHistory.count(),
+        prisma.sentenceLessonHistory.findMany({
+          orderBy: { createdAt: "desc" },
+          take: SENTENCE_LESSON_RECENT_TITLES_LIMIT,
+          select: { title: true },
+        }),
+      ]),
+      "sentenceLessonHistory"
+    );
+  } catch (err) {
+    if (err instanceof DbTimeoutError) {
+      return NextResponse.json(
+        { error: "בעיה זמנית בגישה למאגר הנתונים, נסה/י שוב" },
+        { status: 503 }
+      );
+    }
+    throw err;
+  }
   const level = Math.min(SENTENCE_LESSON_MAX_LEVEL, Math.floor(lessonsCompleted / SENTENCE_LESSON_LEVEL_STEP) + 1);
 
   const system = buildSentenceLessonSystemPrompt(level);
@@ -94,12 +117,13 @@ export async function POST(request: Request) {
     }
     const validated = aiSentenceLessonResponseSchema.safeParse(result);
     if (!validated.success) return null;
-    return {
+    const built = {
       title: validated.data.title,
       ruleExplanation: validated.data.ruleExplanation,
       examples: validateExamples(validated.data.examples as SentenceLessonExample[]),
       exercises: validateExercises(validated.data.exercises as SentenceBuildExercise[]),
     };
+    return isGoodEnough(built) ? built : null;
   }
 
   function isGoodEnough(
@@ -119,17 +143,16 @@ export async function POST(request: Request) {
     exercises: SentenceBuildExercise[];
   } | null;
   try {
-    attempt = await attemptGenerate();
-
-    if (!isGoodEnough(attempt)) {
-      const retry = await attemptGenerate();
-      if (isGoodEnough(retry)) {
-        attempt = retry;
-      }
-    }
+    attempt = await withToolRetry(attemptGenerate);
   } catch (err) {
     if (err instanceof BudgetExceededError) {
       return NextResponse.json({ error: err.message }, { status: 429 });
+    }
+    if (err instanceof DbTimeoutError) {
+      return NextResponse.json(
+        { error: "בעיה זמנית בגישה למאגר הנתונים, נסה/י שוב" },
+        { status: 503 }
+      );
     }
     throw err;
   }
