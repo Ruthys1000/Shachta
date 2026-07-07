@@ -10,7 +10,14 @@ import { withDbTimeout, DbTimeoutError } from "@/lib/dbTimeout";
 import { SUBMIT_STORY_TOOL, buildStorySystemPrompt, buildStoryUserMessage } from "@/lib/ai/storyPrompt";
 import { storyGenerateRequestSchema, aiStoryResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
-import { STORY_MIN_VOCAB, STORY_MIN_SEGMENTS, STORY_MIN_QUESTIONS } from "@/lib/constants";
+import {
+  STORY_MIN_VOCAB,
+  STORY_MIN_SEGMENTS,
+  STORY_MIN_QUESTIONS,
+  STORY_CANDIDATE_POOL_SIZE,
+  STORY_RECENT_TITLES_LIMIT,
+} from "@/lib/constants";
+import { selectVocabularySubset } from "@/lib/vocabSelection";
 import { shuffle } from "@/lib/shuffle";
 import type { Story, StorySegment, StoryQuestion } from "@/types";
 
@@ -38,14 +45,30 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  let vocab;
+  let candidates, recentHistory;
   try {
-    vocab = await withDbTimeout(
+    candidates = await withDbTimeout(
       prisma.vocabulary.findMany({
         where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
-        select: { arabicTranslit: true, hebrewMeaning: true, itemType: true },
+        include: { practiceHistory: true },
       }),
       "vocabulary.findMany"
+    );
+
+    if (candidates.length < STORY_MIN_VOCAB) {
+      return NextResponse.json(
+        { error: "צריך לפחות 5 מילים באוצר כדי ליצור סיפור" },
+        { status: 400 }
+      );
+    }
+
+    recentHistory = await withDbTimeout(
+      prisma.storyHistory.findMany({
+        orderBy: { createdAt: "desc" },
+        take: STORY_RECENT_TITLES_LIMIT,
+        select: { title: true },
+      }),
+      "storyHistory.findMany"
     );
   } catch (err) {
     if (err instanceof DbTimeoutError) {
@@ -57,15 +80,16 @@ export async function POST(request: Request) {
     throw err;
   }
 
-  if (vocab.length < STORY_MIN_VOCAB) {
-    return NextResponse.json(
-      { error: "צריך לפחות 5 מילים באוצר כדי ליצור סיפור" },
-      { status: 400 }
-    );
-  }
+  // Sample a rotating subset (weighted toward weak/stale words) instead of always
+  // sending the whole growing vocabulary list, so the story's material - and topic -
+  // actually varies between generations.
+  const vocab = selectVocabularySubset(candidates, STORY_CANDIDATE_POOL_SIZE);
 
   const system = buildStorySystemPrompt();
-  const userMessage = buildStoryUserMessage(vocab);
+  const userMessage = buildStoryUserMessage(
+    vocab,
+    recentHistory.map((h: { title: string }) => h.title)
+  );
 
   async function attemptGenerate(): Promise<{
     title: string;

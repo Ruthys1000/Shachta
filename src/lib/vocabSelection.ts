@@ -25,7 +25,7 @@ function priorityWeight(item: VocabularyWithHistory): number {
  * Higher-weight items are more likely to be picked, but the result still varies
  * between calls so the same words aren't served every time.
  */
-export function selectQuizVocabulary<T extends VocabularyWithHistory>(
+export function selectVocabularySubset<T extends VocabularyWithHistory>(
   vocab: T[],
   limit: number
 ): T[] {

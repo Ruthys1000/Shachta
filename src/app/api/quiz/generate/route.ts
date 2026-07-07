@@ -10,7 +10,7 @@ import { withDbTimeout, DbTimeoutError } from "@/lib/dbTimeout";
 import { SUBMIT_QUIZ_TOOL, buildQuizSystemPrompt, buildQuizUserMessage } from "@/lib/ai/quizPrompt";
 import { quizGenerateRequestSchema, aiQuizResponseSchema } from "@/lib/validators";
 import { containsArabicScript } from "@/lib/arabicScript";
-import { selectQuizVocabulary } from "@/lib/quizSelection";
+import { selectVocabularySubset } from "@/lib/vocabSelection";
 import { shuffle } from "@/lib/shuffle";
 import {
   QUIZ_MIN_QUESTIONS,
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "אין עדיין מילים במאגר" }, { status: 400 });
   }
 
-  const vocab = selectQuizVocabulary(candidates, QUIZ_CANDIDATE_POOL_SIZE);
+  const vocab = selectVocabularySubset(candidates, QUIZ_CANDIDATE_POOL_SIZE);
 
   const validVocabIds = new Set(vocab.map((v) => v.id));
   const allowMultipleChoice = vocab.length >= QUIZ_MULTIPLE_CHOICE_MIN_VOCAB;

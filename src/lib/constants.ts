@@ -35,6 +35,12 @@ export const STORY_MIN_SEGMENTS = 4;
 export const STORY_MAX_SEGMENTS = 7;
 export const STORY_MIN_QUESTIONS = 3;
 export const STORY_MAX_QUESTIONS = 6;
+// Size of the candidate word pool sampled (weighted by practice history) before
+// asking Claude to write a story, so the vocabulary mix - and with it the topic -
+// rotates instead of always drawing from the same growing full list.
+export const STORY_CANDIDATE_POOL_SIZE = 12;
+// How many recent story titles to show the AI so it avoids repeating the same topic.
+export const STORY_RECENT_TITLES_LIMIT = 15;
 
 export const SENTENCE_LESSON_MIN_VOCAB = 6;
 export const SENTENCE_LESSON_MIN_EXAMPLES = 2;
