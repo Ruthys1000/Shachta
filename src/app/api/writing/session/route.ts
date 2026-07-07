@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { writingSessionRequestSchema } from "@/lib/validators";
-import { selectQuizVocabulary } from "@/lib/quizSelection";
+import { selectVocabularySubset } from "@/lib/vocabSelection";
 import { shuffle } from "@/lib/shuffle";
 import { WRITING_SESSION_SIZE } from "@/lib/constants";
 import type { WritingPrompt } from "@/types";
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
   }
 
   const picked = shuffle(
-    selectQuizVocabulary(candidates, parsed.data.itemCount ?? WRITING_SESSION_SIZE)
+    selectVocabularySubset(candidates, parsed.data.itemCount ?? WRITING_SESSION_SIZE)
   );
   const items: WritingPrompt[] = picked.map((v) => ({
     vocabularyId: v.id,
