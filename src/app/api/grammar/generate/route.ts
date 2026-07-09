@@ -16,7 +16,6 @@ import { grammarGenerateRequestSchema, aiGrammarLessonResponseSchema } from "@/l
 import { containsArabicScript } from "@/lib/arabicScript";
 import {
   GRAMMAR_LESSON_MIN_VOCAB,
-  GRAMMAR_LESSON_MIN_CONJUGATIONS,
   GRAMMAR_LESSON_MIN_EXERCISES,
   GRAMMAR_LEVEL_STEP,
   GRAMMAR_MAX_LEVEL,
@@ -129,9 +128,11 @@ export async function POST(request: Request) {
   function isGoodEnough(
     a: { conjugationExamples: GrammarConjugationExample[]; exercises: GrammarExercise[] } | null
   ): boolean {
+    // The prompt asks for exactly one conjugation row per required pronoun,
+    // so that (not a static constant) is the real per-lesson minimum.
     return (
       !!a &&
-      a.conjugationExamples.length >= GRAMMAR_LESSON_MIN_CONJUGATIONS &&
+      a.conjugationExamples.length >= pronouns.length &&
       a.exercises.length >= GRAMMAR_LESSON_MIN_EXERCISES
     );
   }
