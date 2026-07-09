@@ -1,0 +1,49 @@
+import { Trophy } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import type { GrammarExercise } from "@/types";
+
+export function GrammarSummary({
+  total,
+  correctCount,
+  missed,
+  onRestart,
+}: {
+  total: number;
+  correctCount: number;
+  missed: { exercise: GrammarExercise; userAnswer: string }[];
+  onRestart: () => void;
+}) {
+  const percent = total === 0 ? 0 : Math.round((correctCount / total) * 100);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <Card className="flex flex-col items-center gap-2 text-center">
+        <Trophy className="size-10 text-secondary" />
+        <p className="text-2xl font-bold">
+          {correctCount} / {total}
+        </p>
+        <p className="text-sm text-muted">{percent}% תשובות נכונות</p>
+      </Card>
+
+      {missed.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-sm font-semibold text-muted">תרגילים שכדאי לחזור עליהם</h2>
+          {missed.map(({ exercise, userAnswer }, idx) => (
+            <Card key={idx} tone="danger" className="flex flex-col gap-1">
+              <p className="text-sm font-medium">{exercise.promptHebrew}</p>
+              <p className="text-sm text-muted">התשובה שלך: {userAnswer || "(לא נבחרה)"}</p>
+              <p className="text-sm text-success" dir="ltr">
+                התשובה הנכונה: {exercise.correctAnswer}
+              </p>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      <Button onClick={onRestart} className="self-center">
+        שיעור חדש
+      </Button>
+    </div>
+  );
+}

@@ -96,6 +96,7 @@ export interface StoryQuestion {
 
 export interface Story {
   title: string;
+  theme: string;
   segments: StorySegment[];
   questions: StoryQuestion[];
 }
@@ -122,4 +123,26 @@ export interface SentenceLesson {
   ruleExplanation: string;
   examples: SentenceLessonExample[];
   exercises: SentenceBuildExercise[];
+}
+
+export interface GrammarConjugationExample {
+  pronoun: string;
+  arabicTranslit: string;
+  hebrewMeaning: string;
+}
+
+export interface GrammarExercise {
+  promptHebrew: string;
+  correctAnswer: string;
+  options: string[];
+}
+
+export interface GrammarLesson {
+  title: string;
+  ruleExplanation: string;
+  tense: string;
+  pronouns: string[];
+  focus: string;
+  conjugationExamples: GrammarConjugationExample[];
+  exercises: GrammarExercise[];
 }

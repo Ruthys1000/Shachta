@@ -15,7 +15,7 @@ import {
   STORY_MIN_SEGMENTS,
   STORY_MIN_QUESTIONS,
   STORY_CANDIDATE_POOL_SIZE,
-  STORY_RECENT_TITLES_LIMIT,
+  STORY_RECENT_THEMES_LIMIT,
 } from "@/lib/constants";
 import { selectVocabularySubset } from "@/lib/vocabSelection";
 import { shuffle } from "@/lib/shuffle";
@@ -65,8 +65,8 @@ export async function POST(request: Request) {
     recentHistory = await withDbTimeout(
       prisma.storyHistory.findMany({
         orderBy: { createdAt: "desc" },
-        take: STORY_RECENT_TITLES_LIMIT,
-        select: { title: true },
+        take: STORY_RECENT_THEMES_LIMIT,
+        select: { theme: true },
       }),
       "storyHistory.findMany"
     );
@@ -85,14 +85,18 @@ export async function POST(request: Request) {
   // actually varies between generations.
   const vocab = selectVocabularySubset(candidates, STORY_CANDIDATE_POOL_SIZE);
 
+  const recentThemes = recentHistory
+    .map((h: { theme: string }) => h.theme)
+    .filter((theme: string) => theme.trim().length > 0);
+  const normalizeTheme = (theme: string) => theme.trim().toLowerCase().replace(/\s+/g, " ");
+  const forbiddenThemes = new Set(recentThemes.map(normalizeTheme));
+
   const system = buildStorySystemPrompt();
-  const userMessage = buildStoryUserMessage(
-    vocab,
-    recentHistory.map((h: { title: string }) => h.title)
-  );
+  const userMessage = buildStoryUserMessage(vocab, recentThemes);
 
   async function attemptGenerate(): Promise<{
     title: string;
+    theme: string;
     segments: StorySegment[];
     questions: StoryQuestion[];
   } | null> {
@@ -109,8 +113,13 @@ export async function POST(request: Request) {
     }
     const validated = aiStoryResponseSchema.safeParse(result);
     if (!validated.success) return null;
+    // Reject a story whose theme collides with a recently-used one instead of
+    // just hoping the model honors the "avoid these themes" instruction - this
+    // triggers withToolRetry's retry with a fresh generation.
+    if (forbiddenThemes.has(normalizeTheme(validated.data.theme))) return null;
     const built = {
       title: validated.data.title,
+      theme: validated.data.theme,
       segments: validateSegments(validated.data.segments as StorySegment[]),
       questions: validateQuestions(validated.data.questions as StoryQuestion[]),
     };
@@ -123,7 +132,12 @@ export async function POST(request: Request) {
     return !!a && a.segments.length >= STORY_MIN_SEGMENTS && a.questions.length >= STORY_MIN_QUESTIONS;
   }
 
-  let attempt: { title: string; segments: StorySegment[]; questions: StoryQuestion[] } | null;
+  let attempt: {
+    title: string;
+    theme: string;
+    segments: StorySegment[];
+    questions: StoryQuestion[];
+  } | null;
   try {
     attempt = await withToolRetry(attemptGenerate);
   } catch (err) {
@@ -150,6 +164,7 @@ export async function POST(request: Request) {
   // before serving — matching against correctAnswer is by value, not index.
   const story: Story = {
     title: attempt.title,
+    theme: attempt.theme,
     segments: attempt.segments,
     questions: attempt.questions.map((q) => ({ ...q, options: shuffle(q.options) })),
   };

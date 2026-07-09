@@ -118,6 +118,7 @@ export const aiStoryQuestionSchema = z.object({
 
 export const aiStoryResponseSchema = z.object({
   title: z.string(),
+  theme: z.string(),
   segments: z.array(aiStorySegmentSchema),
   questions: z.array(aiStoryQuestionSchema),
 });
@@ -158,6 +159,37 @@ export const sentenceLessonCompleteRequestSchema = z.object({
 
 export const storyCompleteRequestSchema = z.object({
   title: z.string().trim().min(1).max(500),
+  theme: z.string().trim().min(1).max(200),
+  correctCount: z.number().int().min(0),
+  wrongCount: z.number().int().min(0),
+});
+
+export const grammarGenerateRequestSchema = z.object({
+  vocabularyIds: z.array(z.string().uuid()).min(1).optional(),
+});
+
+export const aiGrammarConjugationExampleSchema = z.object({
+  pronoun: z.string(),
+  arabicTranslit: z.string(),
+  hebrewMeaning: z.string(),
+});
+
+export const aiGrammarExerciseSchema = z.object({
+  promptHebrew: z.string(),
+  correctAnswer: z.string(),
+  options: z.array(z.string()),
+});
+
+export const aiGrammarLessonResponseSchema = z.object({
+  title: z.string(),
+  ruleExplanation: z.string(),
+  conjugationExamples: z.array(aiGrammarConjugationExampleSchema),
+  exercises: z.array(aiGrammarExerciseSchema),
+});
+
+export const grammarLessonCompleteRequestSchema = z.object({
+  title: z.string().trim().min(1).max(500),
+  focus: z.string().trim().min(1).max(200),
   correctCount: z.number().int().min(0),
   wrongCount: z.number().int().min(0),
 });

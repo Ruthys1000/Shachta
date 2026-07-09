@@ -47,9 +47,21 @@ model SentenceLessonHistory {
   @@map("sentence_lesson_history")
 }
 
+model GrammarLessonHistory {
+  id           String   @id @default(uuid())
+  title        String
+  focus        String
+  correctCount Int      @default(0) @map("correct_count")
+  wrongCount   Int      @default(0) @map("wrong_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("grammar_lesson_history")
+}
+
 model StoryHistory {
   id           String   @id @default(uuid())
   title        String
+  theme        String
   correctCount Int      @default(0) @map("correct_count")
   wrongCount   Int      @default(0) @map("wrong_count")
   createdAt    DateTime @default(now()) @map("created_at")

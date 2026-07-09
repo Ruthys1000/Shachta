@@ -25,6 +25,14 @@ export default function PracticePage() {
           emphasis={emphasisFor(ACTIVITY.sentenceBuilder)}
         />
         <HomeMenuButton
+          href={ACTIVITY.grammar.href}
+          icon={ACTIVITY.grammar.icon}
+          title="דקדוק: גופים וזמנים"
+          description="תרגול נטיית פועל לפי גוף (הוא/היא/אני...) וזמן (עבר/הווה/עתיד)"
+          tag="לימוד"
+          emphasis={emphasisFor(ACTIVITY.grammar)}
+        />
+        <HomeMenuButton
           href={ACTIVITY.story.href}
           icon={ACTIVITY.story.icon}
           title="סיפור והבנת הנקרא"

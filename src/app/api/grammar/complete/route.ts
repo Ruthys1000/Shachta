@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isDemo } from "@/lib/session";
-import { storyCompleteRequestSchema } from "@/lib/validators";
+import { grammarLessonCompleteRequestSchema } from "@/lib/validators";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
-  const parsed = storyCompleteRequestSchema.safeParse(body);
+  const parsed = grammarLessonCompleteRequestSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "קלט לא תקין" }, { status: 400 });
   }
@@ -15,10 +15,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  await prisma.storyHistory.create({
+  await prisma.grammarLessonHistory.create({
     data: {
       title: parsed.data.title,
-      theme: parsed.data.theme,
+      focus: parsed.data.focus,
       correctCount: parsed.data.correctCount,
       wrongCount: parsed.data.wrongCount,
     },
