@@ -28,6 +28,12 @@ export const SENTENCE_LESSON_GENERATE_STEPS = [
   "מכינים תרגול הרכבה...",
 ];
 
+export const GRAMMAR_GENERATE_STEPS = [
+  "בוחרים גופים וזמן לתרגול...",
+  "ה-AI בונה טבלת נטייה...",
+  "מכינים תרגול בחירה מרובה...",
+];
+
 export function ParsingStatus({ steps }: { steps: string[] }) {
   const [stepIndex, setStepIndex] = useState(0);
 

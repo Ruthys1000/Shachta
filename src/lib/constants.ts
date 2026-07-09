@@ -67,3 +67,25 @@ export const LEVEL_XP_BASE = 40;
 export const DAILY_GOAL_TARGET = 15;
 // How many recently-taught rule titles to show the AI so it avoids repeating them.
 export const SENTENCE_LESSON_RECENT_TITLES_LIMIT = 15;
+
+// Fixed grammar-drill universe: every lesson covers one tense and a subset of
+// these pronouns, chosen server-side (see src/lib/grammarFocusSelection.ts) -
+// not left to the AI - so coverage across the full matrix is systematic.
+export const GRAMMAR_PRONOUNS = ["אני", "אתה", "את", "הוא", "היא", "אנחנו", "אתם", "הם"] as const;
+export const GRAMMAR_TENSES = ["עבר", "הווה", "עתיד"] as const;
+
+export const GRAMMAR_LESSON_MIN_VOCAB = 6;
+export const GRAMMAR_LESSON_MIN_CONJUGATIONS = 3;
+export const GRAMMAR_LESSON_MAX_CONJUGATIONS = 8;
+export const GRAMMAR_LESSON_MIN_EXERCISES = 4;
+export const GRAMMAR_LESSON_MAX_EXERCISES = 6;
+
+// Lessons completed needed to advance one grammar level; higher levels widen
+// how many pronouns one lesson drills at once.
+export const GRAMMAR_LEVEL_STEP = 3;
+export const GRAMMAR_MAX_LEVEL = 4;
+// How many past lessons' focus history to look at when picking the
+// least-recently-covered tense/pronoun combo for the next lesson.
+export const GRAMMAR_RECENT_FOCUS_LOOKBACK = 30;
+
+export const XP_PER_GRAMMAR_LESSON = 15;

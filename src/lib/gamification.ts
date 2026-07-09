@@ -3,6 +3,7 @@ import {
   DAILY_GOAL_TARGET,
   LEVEL_XP_BASE,
   XP_PER_CORRECT_ANSWER,
+  XP_PER_GRAMMAR_LESSON,
   XP_PER_SENTENCE_LESSON,
   XP_PER_STORY_COMPLETED,
   XP_PER_VOCAB_ITEM,
@@ -22,9 +23,13 @@ export interface GamificationStats {
   storiesCompleted: number;
   storyQuestionCorrect: number;
   storyQuestionWrong: number;
+  grammarLessonsCompleted: number;
+  grammarExerciseCorrect: number;
+  grammarExerciseWrong: number;
   practicedToday: number;
   storyQuestionsToday: number;
   sentenceExercisesToday: number;
+  grammarExercisesToday: number;
 }
 
 export interface LevelProgress {
@@ -54,9 +59,11 @@ export async function getGamificationStats(): Promise<GamificationStats> {
     historySums,
     sentenceSums,
     storyAggregate,
+    grammarAggregate,
     practicedToday,
     storyTodayAgg,
     sentenceTodayAgg,
+    grammarTodayAgg,
   ] = await Promise.all([
     prisma.vocabulary.groupBy({ by: ["itemType"], _count: true }),
     prisma.practiceHistory.aggregate({
@@ -67,6 +74,10 @@ export async function getGamificationStats(): Promise<GamificationStats> {
       _sum: { correctCount: true, wrongCount: true },
     }),
     prisma.storyHistory.aggregate({
+      _count: true,
+      _sum: { correctCount: true, wrongCount: true },
+    }),
+    prisma.grammarLessonHistory.aggregate({
       _count: true,
       _sum: { correctCount: true, wrongCount: true },
     }),
@@ -81,12 +92,18 @@ export async function getGamificationStats(): Promise<GamificationStats> {
       _sum: { correctCount: true, wrongCount: true },
       where: { createdAt: { gte: startOfTodayUtc() } },
     }),
+    prisma.grammarLessonHistory.aggregate({
+      _sum: { correctCount: true, wrongCount: true },
+      where: { createdAt: { gte: startOfTodayUtc() } },
+    }),
   ]);
 
   const storyQuestionsToday =
     (storyTodayAgg._sum.correctCount ?? 0) + (storyTodayAgg._sum.wrongCount ?? 0);
   const sentenceExercisesToday =
     (sentenceTodayAgg._sum.correctCount ?? 0) + (sentenceTodayAgg._sum.wrongCount ?? 0);
+  const grammarExercisesToday =
+    (grammarTodayAgg._sum.correctCount ?? 0) + (grammarTodayAgg._sum.wrongCount ?? 0);
 
   const phraseCount = byType.find((g) => g.itemType === "PHRASE")?._count ?? 0;
   const sentenceCount = byType.find((g) => g.itemType === "SENTENCE")?._count ?? 0;
@@ -104,9 +121,13 @@ export async function getGamificationStats(): Promise<GamificationStats> {
     storiesCompleted: storyAggregate._count,
     storyQuestionCorrect: storyAggregate._sum.correctCount ?? 0,
     storyQuestionWrong: storyAggregate._sum.wrongCount ?? 0,
+    grammarLessonsCompleted: grammarAggregate._count,
+    grammarExerciseCorrect: grammarAggregate._sum.correctCount ?? 0,
+    grammarExerciseWrong: grammarAggregate._sum.wrongCount ?? 0,
     practicedToday,
     storyQuestionsToday,
     sentenceExercisesToday,
+    grammarExercisesToday,
   };
 }
 
@@ -120,7 +141,10 @@ export function computeXp(stats: GamificationStats): number {
     stats.sentenceExerciseWrong * XP_PER_WRONG_ANSWER +
     stats.storiesCompleted * XP_PER_STORY_COMPLETED +
     stats.storyQuestionCorrect * XP_PER_CORRECT_ANSWER +
-    stats.storyQuestionWrong * XP_PER_WRONG_ANSWER
+    stats.storyQuestionWrong * XP_PER_WRONG_ANSWER +
+    stats.grammarLessonsCompleted * XP_PER_GRAMMAR_LESSON +
+    stats.grammarExerciseCorrect * XP_PER_CORRECT_ANSWER +
+    stats.grammarExerciseWrong * XP_PER_WRONG_ANSWER
   );
 }
 
@@ -154,8 +178,12 @@ export async function getGamificationSummary(): Promise<GamificationSummary> {
     levelProgress: levelProgress(xp),
     dailyGoal: {
       // Quiz/writing words practiced + story questions + sentence-builder
-      // exercises answered today.
-      current: stats.practicedToday + stats.storyQuestionsToday + stats.sentenceExercisesToday,
+      // and grammar exercises answered today.
+      current:
+        stats.practicedToday +
+        stats.storyQuestionsToday +
+        stats.sentenceExercisesToday +
+        stats.grammarExercisesToday,
       target: DAILY_GOAL_TARGET,
     },
     achievements: evaluateAchievements(stats),

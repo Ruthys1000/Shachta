@@ -145,6 +145,54 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
     getCurrent: (stats) => stats.lessonsCompleted,
   },
   {
+    id: "GRAMMAR_1",
+    title: "הנטייה הראשונה",
+    description: "השלמת שיעור דקדוק ראשון על גופים וזמנים",
+    icon: "SpellCheck2",
+    target: 1,
+    getCurrent: (stats) => stats.grammarLessonsCompleted,
+  },
+  {
+    id: "GRAMMAR_5",
+    title: "מכירה את הגופים",
+    description: "5 שיעורי דקדוק הושלמו",
+    icon: "Users",
+    target: 5,
+    getCurrent: (stats) => stats.grammarLessonsCompleted,
+  },
+  {
+    id: "GRAMMAR_15",
+    title: "אלופת הזמנים",
+    description: "15 שיעורי דקדוק — עבר, הווה ועתיד בכיס",
+    icon: "History",
+    target: 15,
+    getCurrent: (stats) => stats.grammarLessonsCompleted,
+  },
+  {
+    id: "GRAMMAR_30",
+    title: "בקיאה בנטיות",
+    description: "30 שיעורי דקדוק הושלמו",
+    icon: "BookMarked",
+    target: 30,
+    getCurrent: (stats) => stats.grammarLessonsCompleted,
+  },
+  {
+    id: "GRAMMAR_EXERCISE_50",
+    title: "נוטה בביטחון",
+    description: "50 תרגילי נטיית פועל נכונים",
+    icon: "CheckSquare",
+    target: 50,
+    getCurrent: (stats) => stats.grammarExerciseCorrect,
+  },
+  {
+    id: "GRAMMAR_EXERCISE_150",
+    title: "מומחית נטייה",
+    description: "150 תרגילי נטיית פועל נכונים",
+    icon: "Hammer",
+    target: 150,
+    getCurrent: (stats) => stats.grammarExerciseCorrect,
+  },
+  {
     id: "PHRASE_10",
     title: "לומדת ביטויים",
     description: "10 ביטויים בערבית מדוברת באוצר שלך",
@@ -179,7 +227,7 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
   {
     id: "ATTEMPTS_500",
     title: "מתרגלת נלהבת",
-    description: "500 תשובות במבדקים, תרגילי משפטים וסיפורים — כל ניסיון הוא למידה",
+    description: "500 תשובות במבדקים, תרגילי משפטים, דקדוק וסיפורים — כל ניסיון הוא למידה",
     icon: "Zap",
     target: 500,
     getCurrent: (stats) =>
@@ -188,7 +236,9 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
       stats.sentenceExerciseCorrect +
       stats.sentenceExerciseWrong +
       stats.storyQuestionCorrect +
-      stats.storyQuestionWrong,
+      stats.storyQuestionWrong +
+      stats.grammarExerciseCorrect +
+      stats.grammarExerciseWrong,
   },
   {
     id: "ATTEMPTS_1000",
@@ -202,7 +252,9 @@ export const ACHIEVEMENT_DEFINITIONS: AchievementDefinition[] = [
       stats.sentenceExerciseCorrect +
       stats.sentenceExerciseWrong +
       stats.storyQuestionCorrect +
-      stats.storyQuestionWrong,
+      stats.storyQuestionWrong +
+      stats.grammarExerciseCorrect +
+      stats.grammarExerciseWrong,
   },
   {
     id: "SENTENCE_EXERCISE_50",
