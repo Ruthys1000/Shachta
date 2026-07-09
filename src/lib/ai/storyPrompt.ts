@@ -8,6 +8,11 @@ export const SUBMIT_STORY_TOOL = {
     type: "object",
     properties: {
       title: { type: "string" },
+      theme: {
+        type: "string",
+        description:
+          "תווית קצרה (1-3 מילים) לנושא/רקע הסיפור, למשל: שוק, טיול משפחתי, יום עבודה, מסעדה.",
+      },
       segments: {
         type: "array",
         items: {
@@ -33,7 +38,7 @@ export const SUBMIT_STORY_TOOL = {
         },
       },
     },
-    required: ["title", "segments", "questions"],
+    required: ["title", "theme", "segments", "questions"],
   },
 } as const;
 
@@ -48,7 +53,7 @@ export function buildStorySystemPrompt(): string {
 
 הסיפור כולו חייב להיות בתעתיק עברי של ערבית מדוברת (כפי שמופיע בעמודה arabicTranslit), ברמת מתחילים, ומחולק לקטעים קצרים (segments) - כל קטע משפט אחד או שניים. לכל קטע ספק תרגום מדויק לעברית בשדה hebrewMeaning. שלב באופן טבעי כמה שיותר מילים וביטויים מרשימת אוצר המילים שסופקה לך, בלי להמציא תוכן מנותק מהרשימה. מותר להשתמש גם במילות קישור/דקדוק בסיסיות שאינן ברשימה כדי לבנות משפטים תקינים ועלילה קולחת.
 
-גוון בכל פעם את נושא העלילה, הדמויות והרקע (למשל: בית, שוק, עבודה, טיול, מסעדה, משפחה, חברים, מזג אוויר, קניות, בריאות, ולא רק אחד מהם שוב ושוב) - אל תתקבע על אותו נושא בכל פעם, גם אם אותן מילות אוצר מתאימות ליותר מנושא אחד.
+בחר לכל סיפור נושא/רקע אחד מתוך הקטגוריות הבאות (או קטגוריה דומה): בית, שוק, עבודה, טיול, מסעדה, בית ספר, חברים, מזג אוויר, קניות, בריאות, ספורט, חגיגה/אירוע משפחתי. אל תשתמש בגינה, עצי זית, פרחים או כפר כרקע ברירת מחדל - רק אם הם ממש נדרשים לפי אוצר המילים ואין ברירה אחרת. דווח על הנושא שבחרת בשדה theme (1-3 מילים). חשוב: גם אם אותן מילות אוצר מתאימות ליותר מנושא אחד, שלב אותן בתוך הנושא שנבחר - אל תיתן למילים להכתיב חזרה לאותו רקע בכל פעם.
 
 אחרי הסיפור, כתוב שאלות הבנת הנקרא (questions) על תוכן הסיפור עצמו - מה קרה, מי עשה מה, למה, ומה התוצאה - ולא שאלות שחזור מילים. השאלה עצמה (question) חייבת להיות בתעתיק עברי של ערבית, עם תרגום מדויק לעברית בשדה questionHebrew. התשובה הנכונה (correctAnswer) חייבת להיות תשובה קצרה (מילה עד ארבע מילים) בתעתיק עברי של ערבית, מבוססת על הבנת הסיפור.
 
@@ -66,13 +71,13 @@ export function buildStorySystemPrompt(): string {
 צור בין ${STORY_MIN_SEGMENTS} ל-${STORY_MAX_SEGMENTS} קטעים לסיפור, ובין ${STORY_MIN_QUESTIONS} ל-${STORY_MAX_QUESTIONS} שאלות הבנה.`;
 }
 
-export function buildStoryUserMessage(vocab: VocabForPrompt[], recentTitles: string[]): string {
+export function buildStoryUserMessage(vocab: VocabForPrompt[], recentThemes: string[]): string {
   const list = vocab
     .map((v) => `- תעתיק: ${v.arabicTranslit} | פירוש: ${v.hebrewMeaning} | סוג: ${v.itemType}`)
     .join("\n");
   const historyNote =
-    recentTitles.length > 0
-      ? `כותרות של סיפורים קודמים (אל תחזור על אותו נושא/עלילה - בחר נושא שונה): ${recentTitles.join(", ")}.`
-      : "זהו הסיפור הראשון - אין סיפורים קודמים להימנע מהם.";
+    recentThemes.length > 0
+      ? `הנושאים הבאים שימשו לאחרונה ואסור לבחור אחד מהם או משהו דומה להם עבור שדה theme: ${recentThemes.join(", ")}. בחר נושא שונה לגמרי.`
+      : "זהו הסיפור הראשון - אין נושאים קודמים להימנע מהם.";
   return `הנה רשימת אוצר המילים האישי (${vocab.length} פריטים):\n\n${list}\n\n${historyNote}\n\nכתוב סיפור קצר ושאלות הבנה כפי שהוסבר.`;
 }

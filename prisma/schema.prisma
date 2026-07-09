@@ -50,6 +50,7 @@ model SentenceLessonHistory {
 model StoryHistory {
   id           String   @id @default(uuid())
   title        String
+  theme        String
   correctCount Int      @default(0) @map("correct_count")
   wrongCount   Int      @default(0) @map("wrong_count")
   createdAt    DateTime @default(now()) @map("created_at")

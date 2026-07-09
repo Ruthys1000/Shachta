@@ -96,6 +96,7 @@ export interface StoryQuestion {
 
 export interface Story {
   title: string;
+  theme: string;
   segments: StorySegment[];
   questions: StoryQuestion[];
 }

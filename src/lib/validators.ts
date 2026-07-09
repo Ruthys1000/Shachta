@@ -118,6 +118,7 @@ export const aiStoryQuestionSchema = z.object({
 
 export const aiStoryResponseSchema = z.object({
   title: z.string(),
+  theme: z.string(),
   segments: z.array(aiStorySegmentSchema),
   questions: z.array(aiStoryQuestionSchema),
 });
@@ -158,6 +159,7 @@ export const sentenceLessonCompleteRequestSchema = z.object({
 
 export const storyCompleteRequestSchema = z.object({
   title: z.string().trim().min(1).max(500),
+  theme: z.string().trim().min(1).max(200),
   correctCount: z.number().int().min(0),
   wrongCount: z.number().int().min(0),
 });

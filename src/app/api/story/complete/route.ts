@@ -18,6 +18,7 @@ export async function POST(request: Request) {
   await prisma.storyHistory.create({
     data: {
       title: parsed.data.title,
+      theme: parsed.data.theme,
       correctCount: parsed.data.correctCount,
       wrongCount: parsed.data.wrongCount,
     },

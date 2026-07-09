@@ -83,6 +83,7 @@ export default function StoryPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         title: story.title,
+        theme: story.theme,
         correctCount: answered.filter((a) => a.correct).length,
         wrongCount: answered.filter((a) => !a.correct).length,
       }),
