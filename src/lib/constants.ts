@@ -75,8 +75,6 @@ export const GRAMMAR_PRONOUNS = ["אני", "אתה", "את", "הוא", "היא",
 export const GRAMMAR_TENSES = ["עבר", "הווה", "עתיד"] as const;
 
 export const GRAMMAR_LESSON_MIN_VOCAB = 6;
-export const GRAMMAR_LESSON_MIN_CONJUGATIONS = 3;
-export const GRAMMAR_LESSON_MAX_CONJUGATIONS = 8;
 export const GRAMMAR_LESSON_MIN_EXERCISES = 4;
 export const GRAMMAR_LESSON_MAX_EXERCISES = 6;
 

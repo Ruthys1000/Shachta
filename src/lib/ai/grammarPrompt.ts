@@ -1,9 +1,4 @@
-import {
-  GRAMMAR_LESSON_MAX_CONJUGATIONS,
-  GRAMMAR_LESSON_MAX_EXERCISES,
-  GRAMMAR_LESSON_MIN_CONJUGATIONS,
-  GRAMMAR_LESSON_MIN_EXERCISES,
-} from "@/lib/constants";
+import { GRAMMAR_LESSON_MAX_EXERCISES, GRAMMAR_LESSON_MIN_EXERCISES } from "@/lib/constants";
 
 export const SUBMIT_GRAMMAR_LESSON_TOOL = {
   name: "submit_grammar_lesson",
@@ -88,5 +83,5 @@ export function buildGrammarUserMessage(vocab: VocabForPrompt[], tense: string, 
   const list = vocab
     .map((v) => `- תעתיק: ${v.arabicTranslit} | פירוש: ${v.hebrewMeaning} | סוג: ${v.itemType}`)
     .join("\n");
-  return `הנה רשימת אוצר המילים האישי (${vocab.length} פריטים), לבחירת פעלים מתוכה במידת האפשר:\n\n${list}\n\nבנה שיעור נטיית פועל בזמן "${tense}" עבור הגופים ${pronouns.join(", ")} בלבד, בין ${GRAMMAR_LESSON_MIN_CONJUGATIONS} ל-${GRAMMAR_LESSON_MAX_CONJUGATIONS} שורות נטייה ותרגילי בחירה מרובה, כפי שהוסבר.`;
+  return `הנה רשימת אוצר המילים האישי (${vocab.length} פריטים), לבחירת פעלים מתוכה במידת האפשר:\n\n${list}\n\nבנה שיעור נטיית פועל בזמן "${tense}" עבור הגופים ${pronouns.join(", ")} בלבד - שורת נטייה אחת לכל גוף (${pronouns.length} שורות בסך הכל), ובין ${GRAMMAR_LESSON_MIN_EXERCISES} ל-${GRAMMAR_LESSON_MAX_EXERCISES} תרגילי בחירה מרובה, כפי שהוסבר.`;
 }
