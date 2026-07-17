@@ -34,6 +34,12 @@ export const GRAMMAR_GENERATE_STEPS = [
   "מכינים תרגול בחירה מרובה...",
 ];
 
+export const PLACEMENT_GENERATE_STEPS = [
+  "בונים מבחן רמה מותאם...",
+  "ה-AI מכין שאלות בכל רמות הקושי...",
+  "מסדרים את המבחן...",
+];
+
 export function ParsingStatus({ steps }: { steps: string[] }) {
   const [stepIndex, setStepIndex] = useState(0);
 

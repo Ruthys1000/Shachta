@@ -22,6 +22,7 @@ import {
   SENTENCE_LESSON_MAX_LEVEL,
   SENTENCE_LESSON_RECENT_TITLES_LIMIT,
 } from "@/lib/constants";
+import { getPlacementLevel, withPlacementFloor } from "@/lib/level";
 import type { SentenceLessonExample, SentenceBuildExercise } from "@/types";
 
 export const maxDuration = 120;
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  let vocab, lessonsCompleted, recentHistory;
+  let vocab, lessonsCompleted, recentHistory, placementLevel;
   try {
     vocab = await withDbTimeout(
       prisma.vocabulary.findMany({
@@ -70,7 +71,7 @@ export async function POST(request: Request) {
       );
     }
 
-    [lessonsCompleted, recentHistory] = await withDbTimeout(
+    [lessonsCompleted, recentHistory, placementLevel] = await withDbTimeout(
       Promise.all([
         prisma.sentenceLessonHistory.count(),
         prisma.sentenceLessonHistory.findMany({
@@ -78,6 +79,7 @@ export async function POST(request: Request) {
           take: SENTENCE_LESSON_RECENT_TITLES_LIMIT,
           select: { title: true },
         }),
+        getPlacementLevel(),
       ]),
       "sentenceLessonHistory"
     );
@@ -90,7 +92,9 @@ export async function POST(request: Request) {
     }
     throw err;
   }
-  const level = Math.min(SENTENCE_LESSON_MAX_LEVEL, Math.floor(lessonsCompleted / SENTENCE_LESSON_LEVEL_STEP) + 1);
+  // Placement test sets a baseline; completed-lesson count can raise it further.
+  const derivedLevel = Math.floor(lessonsCompleted / SENTENCE_LESSON_LEVEL_STEP) + 1;
+  const level = withPlacementFloor(placementLevel, derivedLevel, SENTENCE_LESSON_MAX_LEVEL);
 
   const system = buildSentenceLessonSystemPrompt(level);
   const userMessage = buildSentenceLessonUserMessage(

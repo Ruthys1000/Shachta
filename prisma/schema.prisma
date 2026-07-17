@@ -69,6 +69,17 @@ model StoryHistory {
   @@map("story_history")
 }
 
+model AppSettings {
+  id               String    @id @default("singleton")
+  placementLevel   Int?      @map("placement_level")
+  placementScore   Int?      @map("placement_score")
+  placementTotal   Int?      @map("placement_total")
+  placementTakenAt DateTime? @map("placement_taken_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  @@map("app_settings")
+}
+
 model AiUsageLog {
   id           String   @id @default(uuid())
   route        String

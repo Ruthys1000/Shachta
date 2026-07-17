@@ -21,6 +21,7 @@ import {
   GRAMMAR_MAX_LEVEL,
   GRAMMAR_RECENT_FOCUS_LOOKBACK,
 } from "@/lib/constants";
+import { getPlacementLevel, withPlacementFloor } from "@/lib/level";
 import { selectGrammarFocus, formatGrammarFocus } from "@/lib/grammarFocusSelection";
 import type { GrammarConjugationExample, GrammarExercise } from "@/types";
 
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  let vocab, lessonsCompleted, recentHistory;
+  let vocab, lessonsCompleted, recentHistory, placementLevel;
   try {
     vocab = await withDbTimeout(
       prisma.vocabulary.findMany({
@@ -66,7 +67,7 @@ export async function POST(request: Request) {
       );
     }
 
-    [lessonsCompleted, recentHistory] = await withDbTimeout(
+    [lessonsCompleted, recentHistory, placementLevel] = await withDbTimeout(
       Promise.all([
         prisma.grammarLessonHistory.count(),
         prisma.grammarLessonHistory.findMany({
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
           take: GRAMMAR_RECENT_FOCUS_LOOKBACK,
           select: { focus: true },
         }),
+        getPlacementLevel(),
       ]),
       "grammarLessonHistory"
     );
@@ -87,7 +89,9 @@ export async function POST(request: Request) {
     throw err;
   }
 
-  const level = Math.min(GRAMMAR_MAX_LEVEL, Math.floor(lessonsCompleted / GRAMMAR_LEVEL_STEP) + 1);
+  // Placement test sets a baseline; completed-lesson count can raise it further.
+  const derivedLevel = Math.floor(lessonsCompleted / GRAMMAR_LEVEL_STEP) + 1;
+  const level = withPlacementFloor(placementLevel, derivedLevel, GRAMMAR_MAX_LEVEL);
   const pronounCount = PRONOUN_COUNT_BY_LEVEL[level] ?? 2;
   const { tense, pronouns } = selectGrammarFocus(recentHistory, pronounCount);
   const focus = formatGrammarFocus(tense, pronouns);

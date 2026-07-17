@@ -41,7 +41,15 @@ interface VocabForPrompt {
   itemType: string;
 }
 
-export function buildQuizSystemPrompt(allowMultipleChoice: boolean): string {
+const LEVEL_GUIDANCE: Record<number, string> = {
+  1: "רמה 1 (מתחילים): שאלות ישירות ופשוטות - בעיקר תרגום מילה בודדת והתאמת פירוש, ניסוח קצר וברור.",
+  2: "רמה 2: אפשר לשלב שאלות השלמת חסר וזיהוי משמעות בהקשר קצר, מעבר לתרגום ישיר.",
+  3: "רמה 3: העדף שאלות בהקשר - השלמת חסר במשפט, מצבים (scenario) קצרים, ובחירה בין הסחות דעת קרובות.",
+  4: "רמה 4 (מתקדם): שאלות מאתגרות עם הקשר עשיר יותר ומצבים, הסחות דעת עדינות שדורשות הבנה מדויקת ולא ניחוש.",
+};
+
+export function buildQuizSystemPrompt(allowMultipleChoice: boolean, level: number): string {
+  const levelText = LEVEL_GUIDANCE[level] ?? LEVEL_GUIDANCE[1];
   return `אתה בונה מבדק תרגול לאפליקציה לתרגול ערבית מדוברת, עבור דובר עברית שרוצה לתרגל את אוצר המילים האישי שלו.
 
 אסור בהחלט להחזיר טקסט בכתב ערבי בשום שדה (שאלה, תשובה, אפשרות). רק עברית ותעתיק עברי מותרים.
@@ -58,7 +66,9 @@ export function buildQuizSystemPrompt(allowMultipleChoice: boolean): string {
 
 ${allowMultipleChoice ? "" : "אין מספיק מילים שונות במאגר כדי לבנות הסחות דעת אמינות - אל תכלול שאלות multiple_choice במבדק הזה."}
 
-ודא גיוון בין סוגי השאלות ובין הפריטים מהרשימה, וכוון לרמת מתחילים.`;
+ודא גיוון בין סוגי השאלות ובין הפריטים מהרשימה.
+
+רמת הקושי הנדרשת למבדק הזה: ${levelText}`;
 }
 
 export function buildQuizUserMessage(vocab: VocabForPrompt[], questionCount: number): string {

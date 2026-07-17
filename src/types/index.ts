@@ -146,3 +146,17 @@ export interface GrammarLesson {
   conjugationExamples: GrammarConjugationExample[];
   exercises: GrammarExercise[];
 }
+
+export interface PlacementQuestion {
+  /** Difficulty band this question probes, 1..4. */
+  level: number;
+  /** The prompt (Hebrew, or Hebrew-script transliteration with a Hebrew gloss). */
+  question: string;
+  correctAnswer: string;
+  options: string[];
+}
+
+export interface PlacementTest {
+  title: string;
+  questions: PlacementQuestion[];
+}

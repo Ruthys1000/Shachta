@@ -8,6 +8,15 @@ export const DEMO_SESSION_MAX_AGE_SECONDS = 60 * 60 * 48; // 48 hours
 
 export const CLAUDE_MODEL = "claude-sonnet-4-6";
 
+// Shared learner difficulty scale (1..4), used by every leveled activity.
+// A placement test sets a baseline level; organic per-activity progression can
+// climb above it but never below (see src/lib/level.ts).
+export const LEARNER_MAX_LEVEL = 4;
+// Placement test: how many questions per difficulty band, and the share of a
+// band's questions that must be answered correctly to "pass" that band.
+export const PLACEMENT_QUESTIONS_PER_LEVEL = 3;
+export const PLACEMENT_BAND_PASS_RATIO = 0.5;
+
 // Daily spending cap for Anthropic API usage. Override via env if needed.
 export const AI_DAILY_BUDGET_USD = process.env.AI_DAILY_BUDGET_USD
   ? Number(process.env.AI_DAILY_BUDGET_USD)
