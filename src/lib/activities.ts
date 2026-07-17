@@ -55,13 +55,13 @@ export interface Activity {
 export const ACTIVITIES: Activity[] = [
   { key: "lesson", href: "/lesson", label: "סריקת שיעור", icon: ICON.lesson, core: true, group: "input" },
   { key: "addWords", href: "/add-words", label: "הוספת מילים", icon: ICON.addWords, core: false, group: "input" },
+  { key: "placementTest", href: "/placement-test", label: "מבחן רמה", icon: ICON.placementTest, core: false, group: "practice" },
   { key: "quiz", href: "/quiz", label: "מבדק", icon: ICON.quiz, core: true, group: "practice" },
   { key: "sentenceBuilder", href: "/sentence-builder", label: "בניית משפטים", icon: ICON.sentenceBuilder, core: false, group: "practice" },
   { key: "grammar", href: "/grammar", label: "דקדוק: גופים וזמנים", icon: ICON.grammar, core: false, group: "practice" },
   { key: "story", href: "/story", label: "סיפור והבנת הנקרא", icon: ICON.story, core: false, group: "practice" },
   { key: "writing", href: "/writing", label: "כתיבה", icon: ICON.writing, core: false, group: "practice" },
   { key: "vocabulary", href: "/vocabulary", label: "אוצר המילים שלי", icon: ICON.vocabulary, core: false, group: "track" },
-  { key: "placementTest", href: "/placement-test", label: "מבחן רמה", icon: ICON.placementTest, core: false, group: "track" },
   { key: "achievements", href: "/achievements", label: "הישגים", icon: ICON.achievements, core: false, group: "track" },
 ];
 
