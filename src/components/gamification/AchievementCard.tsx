@@ -1,11 +1,11 @@
-import { Lock } from "lucide-react";
+import { Lock, Award } from "lucide-react";
 import { clsx } from "clsx";
 import type { AchievementResult } from "@/lib/achievements";
 import { Card } from "@/components/ui/Card";
 import { achievementIcons } from "@/components/gamification/achievementIcons";
 
 export function AchievementCard({ achievement }: { achievement: AchievementResult }) {
-  const Icon = achievementIcons[achievement.icon];
+  const Icon = achievementIcons[achievement.icon] ?? Award;
   const { title, description, unlocked, current, target, percent } = achievement;
 
   return (
