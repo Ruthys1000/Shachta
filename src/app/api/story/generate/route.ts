@@ -19,6 +19,7 @@ import {
 } from "@/lib/constants";
 import { selectVocabularySubset } from "@/lib/vocabSelection";
 import { shuffle } from "@/lib/shuffle";
+import { getPlacementLevel } from "@/lib/level";
 import type { Story, StorySegment, StoryQuestion } from "@/types";
 
 export const maxDuration = 120;
@@ -45,13 +46,16 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  let candidates, recentHistory;
+  let candidates, recentHistory, placementLevel;
   try {
-    candidates = await withDbTimeout(
-      prisma.vocabulary.findMany({
-        where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
-        include: { practiceHistory: true },
-      }),
+    [candidates, placementLevel] = await withDbTimeout(
+      Promise.all([
+        prisma.vocabulary.findMany({
+          where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
+          include: { practiceHistory: true },
+        }),
+        getPlacementLevel(),
+      ]),
       "vocabulary.findMany"
     );
 
@@ -91,7 +95,7 @@ export async function POST(request: Request) {
   const normalizeTheme = (theme: string) => theme.trim().toLowerCase().replace(/\s+/g, " ");
   const forbiddenThemes = new Set(recentThemes.map(normalizeTheme));
 
-  const system = buildStorySystemPrompt();
+  const system = buildStorySystemPrompt(placementLevel);
   const userMessage = buildStoryUserMessage(vocab, recentThemes);
 
   async function attemptGenerate(): Promise<{

@@ -13,6 +13,7 @@ import {
   Target,
   Sparkles,
   SpellCheck2,
+  Gauge,
 } from "lucide-react";
 
 /**
@@ -33,6 +34,7 @@ export const ICON = {
   addWords: ListPlus,
   vocabulary: BookOpen,
   achievements: Award,
+  placementTest: Gauge,
   level: TrendingUp,
   dailyGoal: Target,
   ai: Sparkles,
@@ -59,6 +61,7 @@ export const ACTIVITIES: Activity[] = [
   { key: "story", href: "/story", label: "סיפור והבנת הנקרא", icon: ICON.story, core: false, group: "practice" },
   { key: "writing", href: "/writing", label: "כתיבה", icon: ICON.writing, core: false, group: "practice" },
   { key: "vocabulary", href: "/vocabulary", label: "אוצר המילים שלי", icon: ICON.vocabulary, core: false, group: "track" },
+  { key: "placementTest", href: "/placement-test", label: "מבחן רמה", icon: ICON.placementTest, core: false, group: "track" },
   { key: "achievements", href: "/achievements", label: "הישגים", icon: ICON.achievements, core: false, group: "track" },
 ];
 

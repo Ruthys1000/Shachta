@@ -12,6 +12,7 @@ import { quizGenerateRequestSchema, aiQuizResponseSchema } from "@/lib/validator
 import { containsArabicScript } from "@/lib/arabicScript";
 import { selectVocabularySubset } from "@/lib/vocabSelection";
 import { shuffle } from "@/lib/shuffle";
+import { getPlacementLevel } from "@/lib/level";
 import {
   QUIZ_MIN_QUESTIONS,
   QUIZ_MAX_QUESTIONS,
@@ -45,13 +46,16 @@ export async function POST(request: Request) {
   }
 
   const { vocabularyIds } = parsedRequest.data;
-  let candidates;
+  let candidates, placementLevel;
   try {
-    candidates = await withDbTimeout(
-      prisma.vocabulary.findMany({
-        where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
-        include: { practiceHistory: true },
-      }),
+    [candidates, placementLevel] = await withDbTimeout(
+      Promise.all([
+        prisma.vocabulary.findMany({
+          where: vocabularyIds ? { id: { in: vocabularyIds } } : undefined,
+          include: { practiceHistory: true },
+        }),
+        getPlacementLevel(),
+      ]),
       "vocabulary.findMany"
     );
   } catch (err) {
@@ -76,7 +80,7 @@ export async function POST(request: Request) {
     parsedRequest.data.questionCount ??
     Math.min(QUIZ_MAX_QUESTIONS, Math.max(QUIZ_MIN_QUESTIONS, vocab.length));
 
-  const system = buildQuizSystemPrompt(allowMultipleChoice);
+  const system = buildQuizSystemPrompt(allowMultipleChoice, placementLevel);
   const userMessage = buildQuizUserMessage(vocab, questionCount);
 
   function isGoodEnough(a: { questions: QuizQuestion[] } | null): boolean {

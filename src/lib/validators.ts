@@ -193,3 +193,25 @@ export const grammarLessonCompleteRequestSchema = z.object({
   correctCount: z.number().int().min(0),
   wrongCount: z.number().int().min(0),
 });
+
+export const placementGenerateRequestSchema = z.object({
+  vocabularyIds: z.array(z.string().uuid()).min(1).optional(),
+});
+
+export const aiPlacementQuestionSchema = z.object({
+  level: z.number().int().min(1).max(4),
+  question: z.string(),
+  correctAnswer: z.string(),
+  options: z.array(z.string()),
+});
+
+export const aiPlacementResponseSchema = z.object({
+  title: z.string(),
+  questions: z.array(aiPlacementQuestionSchema),
+});
+
+export const placementCompleteRequestSchema = z.object({
+  placementLevel: z.number().int().min(1).max(4),
+  score: z.number().int().min(0),
+  total: z.number().int().min(0),
+});
