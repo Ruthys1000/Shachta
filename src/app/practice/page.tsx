@@ -9,6 +9,14 @@ export default function PracticePage() {
       <ScreenHeader title="תרגול" icon={ACTIVITY.practice.icon} />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <HomeMenuButton
+          href={ACTIVITY.placementTest.href}
+          icon={ACTIVITY.placementTest.icon}
+          title="מבחן רמה"
+          description="מבחן קצר שקובע את הרמה שלך, וכל התרגילים יתאימו אליה"
+          tag="קביעת רמה"
+          emphasis={emphasisFor(ACTIVITY.placementTest)}
+        />
+        <HomeMenuButton
           href={ACTIVITY.quiz.href}
           icon={ACTIVITY.quiz.icon}
           title="מבדק"
