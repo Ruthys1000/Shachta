@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { LogOut, RotateCcw } from "lucide-react";
 import { ACTIVITY, emphasisFor } from "@/lib/activities";
 import { HomeMenuButton } from "@/components/home/HomeMenuButton";
 import { HomeHeader } from "@/components/home/HomeHeader";
@@ -11,6 +11,8 @@ import { HomeStats } from "@/components/home/HomeStats";
 import { AiBudgetBadge } from "@/components/home/AiBudgetBadge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { PageShell } from "@/components/ui/PageShell";
+import { useToast } from "@/components/ui/Toast";
+import { apiFetch } from "@/lib/apiFetch";
 import type { GamificationSummary } from "@/lib/gamification";
 
 export default function Home() {
@@ -18,13 +20,33 @@ export default function Home() {
   const [summary, setSummary] = useState<GamificationSummary | null>(null);
   const [confirmingLogout, setConfirmingLogout] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [confirmingReset, setConfirmingReset] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const toast = useToast();
 
-  useEffect(() => {
-    fetch("/api/gamification/summary")
+  function loadSummary() {
+    return fetch("/api/gamification/summary")
       .then((res) => (res.ok ? res.json() : null))
       .then(setSummary)
       .catch(() => setSummary(null));
+  }
+
+  useEffect(() => {
+    loadSummary();
   }, []);
+
+  async function handleReset() {
+    setResetting(true);
+    const result = await apiFetch("/api/progress/reset", { method: "POST" });
+    setResetting(false);
+    setConfirmingReset(false);
+    if (!result.ok) {
+      toast.error(result.error);
+      return;
+    }
+    toast.success("ההתקדמות אופסה — המילים נשמרו, אפשר להתחיל מחדש");
+    loadSummary();
+  }
 
   async function handleLogout() {
     setLoggingOut(true);
@@ -90,6 +112,13 @@ export default function Home() {
       <div className="mt-10 flex flex-col items-center gap-3">
         <AiBudgetBadge />
         <button
+          onClick={() => setConfirmingReset(true)}
+          className="flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted transition hover:bg-muted-soft"
+        >
+          <RotateCcw className="size-4" />
+          איפוס התקדמות בתרגילים
+        </button>
+        <button
           onClick={() => setConfirmingLogout(true)}
           className="flex items-center gap-2 rounded-full px-4 py-2 text-sm text-muted transition hover:bg-muted-soft"
         >
@@ -97,6 +126,18 @@ export default function Home() {
           התנתקות
         </button>
       </div>
+
+      {confirmingReset && (
+        <ConfirmDialog
+          title="איפוס התקדמות"
+          message="כל המילים יישמרו, אבל היסטוריית התרגול, השיעורים שהושלמו ותוצאת מבחן הרמה יימחקו, והתרגילים יתחילו מהרמה הבסיסית. להמשיך?"
+          confirmLabel="איפוס"
+          tone="danger"
+          loading={resetting}
+          onConfirm={handleReset}
+          onCancel={() => setConfirmingReset(false)}
+        />
+      )}
 
       {confirmingLogout && (
         <ConfirmDialog
